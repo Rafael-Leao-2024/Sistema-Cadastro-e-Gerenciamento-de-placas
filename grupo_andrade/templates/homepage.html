@@ -1,0 +1,91 @@
+{% extends 'base.html' %} {% block content %}
+
+<!-- Seção principal -->
+<main class="container mx-auto py-10 px-4">
+  <section class="text-center mb-8">
+    <h2 class="text-4xl font-bold text-green-700">
+      Bem-vindo aos nossos Serviços de DETRAN e Veículos
+    </h2>
+    <p class="text-lg text-gray-600 mt-4">
+      Oferecemos uma variedade de serviços para facilitar suas necessidades de
+      veículos, como transferências, documentação e muito mais.
+    </p>
+  </section>
+
+  <!-- Serviços -->
+  <section
+    id="servicos"
+    class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6"
+  >
+    <div
+      class="bg-white p-6 rounded-lg shadow-md hover:shadow-xl hover:scale-105 transform transition-transform duration-200"
+    >
+      <h3 class="text-2xl font-semibold text-green-700 mb-2">
+        Transferência de Veículos
+      </h3>
+      <p class="text-gray-600">
+        Realize a transferência de propriedade do seu veículo de forma rápida e
+        sem complicações.
+      </p>
+    </div>
+
+    <div
+      class="bg-white p-6 rounded-lg shadow-md hover:shadow-xl hover:scale-105 transform transition-transform duration-200"
+    >
+      <h3 class="text-2xl font-semibold text-green-700 mb-2">
+        Licenciamento Anual
+      </h3>
+      <p class="text-gray-600">
+        Mantenha seu veículo regularizado com nosso serviço de licenciamento
+        anual.
+      </p>
+    </div>
+
+    <div
+      class="bg-white p-6 rounded-lg shadow-md hover:shadow-xl hover:scale-105 transform transition-transform duration-200"
+    >
+      <h3 class="text-2xl font-semibold text-green-700 mb-2">
+        Segunda Via de Documentos
+      </h3>
+      <p class="text-gray-600">
+        Emissão de segunda via de CRLV, CRV e outros documentos essenciais.
+      </p>
+    </div>
+
+    <div
+      class="bg-white p-6 rounded-lg shadow-md hover:shadow-xl hover:scale-105 transform transition-transform duration-200"
+    >
+      <a href="{{ url_for('emplacamento') }}">
+        <h3 class="text-2xl font-semibold text-blue-900 mb-2">Emplacamento</h3>
+      </a>
+      <p class="text-gray-600">
+        Placas novas e substituição de placas para veículos de todos os tipos.
+      </p>
+    </div>
+
+    <div
+      class="bg-white p-6 rounded-lg shadow-md hover:shadow-xl hover:scale-105 transform transition-transform duration-200"
+    >
+      <h3 class="text-2xl font-semibold text-red-900 mb-2">
+        Vistoria Veicular
+      </h3>
+      <p class="text-gray-600">
+        Serviço de vistoria para garantir que seu veículo está em conformidade
+        com as leis de trânsito.
+      </p>
+    </div>
+
+    <div
+      class="bg-white p-6 rounded-lg shadow-md hover:shadow-xl hover:scale-105 transform transition-transform duration-200"
+    >
+      <h3 class="text-2xl font-semibold text-green-700 mb-2">
+        Consultoria DETRAN
+      </h3>
+      <p class="text-gray-600">
+        Assessoria completa para resolver pendências e regularizar documentos
+        junto ao DETRAN.
+      </p>
+    </div>
+  </section>
+</main>
+{% endblock %}

@@ -1,0 +1,123 @@
+{% extends "base.html" %} {% block content %}
+<div class="container mx-auto p-6">
+  <h1 class="text-3xl font-bold text-center mb-8 text-gray-800">
+    Detalhes da Placa: {{ plate.placa.upper() }}
+  </h1>
+
+  <div class="bg-white shadow-md rounded-lg p-6">
+    <div class="text-center mb-6">
+      <h2 class="text-xl font-semibold text-gray-700">
+        Placa: {{ plate.placa.upper() }}
+      </h2>
+      <p class="text-gray-500">
+        Data de Criação: {{ plate.received_at.strftime('%Y-%m-%d %H:%M') if
+        plate.received_at else "Não Recebida" }}
+      </p>
+    </div>
+
+    <form
+      method="POST"
+      action="{{ url_for('placa_detail', plate_id=plate.id) }}"
+    >
+      {{ form.hidden_tag() }}
+      <label class="inline-flex items-center mt-3">
+        <input
+          type="checkbox"
+          name="received"
+          class="form-checkbox h-6 w-6"
+          {%
+          if
+          plate.received
+          %}checked{%
+          endif
+          %}
+        />
+        <span
+          class="ml-2 text-lg {{ 'text-green-600' if plate.received else 'text-red-800' }}"
+        >
+          {{ "Recebida" if plate.received else "Placa Pendente Click para
+          confirma recebimento" }}
+        </span>
+      </label>
+
+      <div class="mt-4">
+        <button
+          type="submit"
+          class="bg-blue-500 text-white px-4 py-2 rounded-md"
+        >
+          Atualizar Status
+        </button>
+      </div>
+    </form>
+  </div>
+</div>
+
+<!-- Modal -->
+<div
+  id="deleteModal"
+  class="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50 hidden"
+>
+  <div class="bg-white rounded-lg shadow-lg w-96">
+    <div class="border-b p-4 flex justify-between items-center">
+      <h5 class="text-lg font-semibold text-gray-800">Deletar Placa?</h5>
+      <button
+        class="text-gray-500 hover:text-gray-700 focus:outline-none"
+        onclick="closeModal()"
+      >
+        &times;
+      </button>
+    </div>
+    <div class="p-4">
+      <p class="text-sm text-gray-600">
+        Você tem certeza que deseja deletar esta placa? Esta ação não pode ser
+        desfeita.
+      </p>
+    </div>
+    <div class="border-t p-4 flex justify-end space-x-3">
+      <button
+        class="px-4 py-2 bg-gray-300 text-gray-800 rounded-md hover:bg-gray-400 transition"
+        onclick="closeModal()"
+      >
+        Fechar
+      </button>
+      <form action="{{ url_for('delete', placa_id=plate.id) }}" method="POST">
+        <button
+          type="submit"
+          class="px-4 py-2 bg-red-500 text-white rounded-md hover:bg-red-600 transition"
+        >
+          Deletar
+        </button>
+      </form>
+    </div>
+  </div>
+</div>
+
+<!-- Botão para abrir o modal -->
+<div class="flex mt-2 justify-center space-x-3">
+  <button
+    class="px-4 py-2 bg-red-700 text-white rounded-md hover:bg-red-500 transition"
+    onclick="openModal()"
+  >
+    Deletar Placa
+  </button>
+</div>
+
+<script>
+  // Função para abrir o modal
+  function openModal() {
+    const modal = document.getElementById('deleteModal');
+    if (modal) {
+      modal.classList.remove('hidden');
+    }
+  }
+
+  // Função para fechar o modal
+  function closeModal() {
+    const modal = document.getElementById('deleteModal');
+    if (modal) {
+      modal.classList.add('hidden');
+    }
+  }
+</script>
+
+{% endblock %}

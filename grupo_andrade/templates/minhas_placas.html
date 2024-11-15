@@ -1,0 +1,95 @@
+{% extends "base.html" %} {% block content %}
+<div class="container mx-auto p-6">
+  <h1 class="text-3xl font-bold text-center mb-8 text-gray-800">
+    Placas do Usuário
+    <a href="{{ url_for('emplacamento') }}"
+      ><i class="fas fa-plus-circle text-green-500 ml-2"></i
+    ></a>
+  </h1>
+
+  <div class="bg-white shadow-md rounded-lg p-6">
+    <div class="text-center mb-6">
+      <h2 class="text-xl font-semibold text-gray-700">
+        {{ current_user.username }}
+      </h2>
+      <p>Quantidade de placas: {{ current_user.placas|length }}</p>
+      <p class="text-gray-500">{{ current_user.email }}</p>
+    </div>
+
+    {% for placa in placas %}
+    <a href="{{ url_for('placa_detail', plate_id=placa.id) }}">
+      <div
+        class="ml-20 grid grid-cols-4 flex items-center bg-gray-50 p-4 mb-4 rounded-lg shadow-sm"
+      >
+        <div
+          class="flex-shrink-0 w-20 h-20 bg-gray-200 rounded-lg flex items-center justify-center mr-4"
+        >
+          <!-- Exibição da Placa no estilo Mercosul -->
+          <div class="inline-block">
+            <div
+              class="faixa-mercosul text-sm text-white bg-blue-600 py-1 px-2 mb-2"
+            >
+              BRASIL
+            </div>
+            <div class="text-3xl font-bold">{{ placa.placa.upper() }}</div>
+          </div>
+        </div>
+        <!-- Informações da Placa -->
+        <div class="flex flex-col space-y-1">
+          <p class="text-lg font-semibold text-gray-800">
+            Placa: {{ placa.placa.upper() }}
+          </p>
+          <p class="text-gray-600">
+            Data: {{ placa.date_create.strftime('%Y-%m-%d') }}
+          </p>
+          <p class="text-gray-600">
+            Hora: {{ placa.date_create.strftime('%H:%M') }}
+          </p>
+        </div>
+        <div class="flex flex-col space-y-1">
+          <p class="text-lg font-semibold text-gray-800">
+            Solicitante: {{ placa.author.username.title() }}
+          </p>
+          <p class="text-gray-600">ID pedido: {{ placa.id }}</p>
+          <p class="text-gray-600">
+            codigo de segurança CRLV: {{ placa.crlv }}
+          </p>
+        </div>
+        <div class="flex flex-col space-y-1">
+          <span
+            class="ml-2 text-lg {{ 'text-green-600' if placa.received else 'text-red-500' }}"
+            ><p class="text-lg font-semibold text-gray-800">Status</p>
+            {{ "Recebida" if placa.received else "Pendente" }}
+          </span>
+        </div>
+      </div>
+    </a>
+
+    {% endfor %}
+  </div>
+  {% for page_num in placas.iter_pages(left_edge=1, right_edge=1,
+  left_current=1, right_current=2) %} {% if page_num %} {% if placas.page ==
+  page_num %}
+  <!-- Página ativa (verde) -->
+  <a
+    class="px-4 py-2 bg-green-500 text-white font-semibold rounded-md hover:bg-green-600 transition-all"
+    href="{{ url_for('minhas_placas', page=page_num) }}"
+  >
+    {{ page_num }}
+  </a>
+  {% else %}
+  <!-- Páginas inativas (verde claro) -->
+  <a
+    class="px-4 py-2 bg-green-200 text-green-700 font-semibold rounded-md hover:bg-green-300 transition-all"
+    href="{{ url_for('minhas_placas', page=page_num) }}"
+  >
+    {{ page_num }}
+  </a>
+  {% endif %} {% else %}
+  <!-- Ellipsis (...) -->
+  <span class="px-4 py-2 bg-gray-200 text-gray-500 font-semibold rounded-md">
+    ...
+  </span>
+  {% endif %} {% endfor %}
+</div>
+{% endblock %}

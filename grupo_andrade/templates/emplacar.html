@@ -1,0 +1,67 @@
+{% extends 'base.html' %} {% block header %}
+<h1>{% block title %}Emplacamento de Veículos{% endblock %}</h1>
+{% endblock %} {% block content %}
+<div
+  class="bg-white mt-6 mb-6 p-8 rounded-lg shadow-md w-full max-w-lg mx-auto"
+>
+  <h2 class="text-2xl font-bold text-center text-green-700 mb-6">
+    Emplacamento de Veículos
+  </h2>
+  <form method="POST">
+    {{ form.hidden_tag() }}
+    <!-- Telefone -->
+    <div class="mb-4">
+      <label for="telefone" class="block text-gray-700">Telefone</label>
+      {{ form.telefone(class="w-full px-4 py-2 border rounded-lg
+      focus:outline-none focus:border-green-600") }}
+    </div>
+
+    <!-- CRLV -->
+    <div class="mb-4">
+      <label for="crlv" class="block text-gray-700">CRLV</label>
+      {{ form.crlv(class="w-full px-4 py-2 border rounded-lg focus:outline-none
+      focus:border-green-600") }}
+    </div>
+
+    <!-- Renavam -->
+    <div class="mb-4">
+      <label for="renavam" class="block text-gray-700">Renavam</label>
+      {{ form.renavam(class="w-full px-4 py-2 border rounded-lg
+      focus:outline-none focus:border-green-600") }}
+    </div>
+
+    <!-- Placa -->
+    <div class="mb-6">
+      <label for="placa" class="block text-gray-700">Placa</label>
+      {{ form.placa(class="w-full px-4 py-2 border rounded-lg focus:outline-none
+      focus:border-green-600 uppercase", oninput="updatePlate()", maxlength="7")
+      }}
+    </div>
+
+    <button
+      type="submit"
+      class="w-full bg-green-400 text-white font-bold py-2 px-4 rounded-md hover:bg-green-600"
+    >
+      Solicitar Placa agora
+    </button>
+  </form>
+
+  <!-- Exibição da Placa no estilo Mercosul -->
+  <div class="mt-8 text-center">
+    <p class="text-lg font-semibold text-gray-700">Placa Digitada:</p>
+    <div class="inline-block">
+      <div class="faixa-mercosul">BRASIL</div>
+      <div id="placaDisplay" class="text-3xl font-bold">ABC1D23</div>
+    </div>
+  </div>
+</div>
+
+<script>
+  function updatePlate() {
+    const placaInput = document.getElementById('placa');
+    const placaDisplay = document.getElementById('placaDisplay');
+    placaDisplay.textContent = placaInput.value.toUpperCase();
+  }
+</script>
+
+{% endblock %}

@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+<html lang="pt">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Grupo Andrade - {% block title %}{% endblock %}</title>
+    <link
+      href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css"
+      rel="stylesheet"
+    />
+    <link
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css"
+      rel="stylesheet"
+    />
+
+    <style>
+      /* Estilos adicionais para imitar a placa Mercosul */
+      #placaDisplay {
+        width: 180px;
+        border: 4px solid #003399; /* Borda azul escuro */
+        color: #003399; /* Texto azul */
+        background-color: white; /* Fundo branco */
+        font-family: Arial, sans-serif;
+        text-align: center;
+        letter-spacing: 2px;
+        padding: 10px 0;
+        border-radius: 8px;
+      }
+      .faixa-mercosul {
+        background-color: #003399; /* Faixa azul */
+        color: white;
+        font-size: 10px;
+        padding: 2px;
+        border-top-left-radius: 4px;
+        border-top-right-radius: 4px;
+      }
+    </style>
+    <script>
+      // Função para atualizar a placa em tempo real
+      function updatePlate() {
+        const placaInput = document.getElementById('placa');
+        const placaDisplay = document.getElementById('placaDisplay');
+        placaDisplay.textContent = placaInput.value.toUpperCase();
+      }
+    </script>
+  </head>
+  <body
+    class="flex flex-col h-screen justify-between bg-gray-100 text-gray-800"
+  >
+    <!-- Cabeçalho -->
+    <header class="bg-green-900 text-white p-4">
+      <div class="container mx-auto flex justify-between items-center">
+        <div class="">
+          <a href="{{ url_for('homepage') }}">
+            <h1 class="text-3xl font-bold">Grupo Andrade</h1>
+          </a>
+          {% if current_user.is_authenticated %}
+          <h3 class="text-center text-base font-medium">
+            Bem vindo(a) {{ current_user.username }}
+          </h3>
+          {% endif %}
+        </div>
+        <nav>
+          <a href="{{ url_for('todas') }}" class="mx-4 hover:underline"
+            >Todas</a
+          >
+          <a href="{{ url_for('minhas_placas') }}" class="mx-4 hover:underline"
+            >MInhas Placas</a
+          >
+          {% if not current_user.is_authenticated %}
+          <a href="{{ url_for('login') }}" class="mx-4 hover:underline"
+            >Login</a
+          >
+          {% else %}
+          <a href="{{ url_for('logout') }}" class="mx-4 hover:underline"
+            >Sair</a
+          >
+          {% endif %}
+        </nav>
+      </div>
+    </header>
+    {% with messages = get_flashed_messages(with_categories=true) %} {% if
+    messages %} {% for category, message in messages %} {% if category ==
+    'success' %} {# Alterar 'success' para a categoria desejada #}
+    <div
+      class="p-4 mb-4 text-center text-base font-medium rounded-lg bg-green-100 text-green-800"
+    >
+      {{ message }}
+    </div>
+    {% elif category == 'error' %}
+    <div
+      class="p-4 mb-4 text-center text-base font-medium rounded-lg bg-red-100 text-red-800"
+    >
+      {{ message }}
+    </div>
+    {% elif category == 'warning' %}
+    <div
+      class="p-4 mb-4 text-center text-base font-medium rounded-lg bg-yellow-100 text-yellow-800"
+    >
+      {{ message }}
+    </div>
+    {% elif category == 'info' %}
+    <div
+      class="p-4 mb-4 text-center text-base font-medium rounded-lg bg-blue-100 text-blue-800"
+    >
+      {{ message }}
+    </div>
+    {% endif %} {% endfor %} {% endif %} {% endwith %} {% block content %}{%
+    endblock %}
+    <!-- Ícone do WhatsApp -->
+    <a
+      href="https://wa.me/5581983685747?text=Oi grupo Andrade da uma preferência"
+      target="_blank"
+      class="fixed bottom-4 right-5 p-2 rounded-full shadow-lg hover:shadow-xl transition duration-300"
+      aria-label="WhatsApp"
+    >
+      <img
+        src="https://upload.wikimedia.org/wikipedia/commons/6/6b/WhatsApp.svg"
+        alt="WhatsApp"
+        class="h-12 w-12"
+      />
+    </a>
+
+    <!-- Rodapé -->
+    <footer id="contato" class="bg-green-900 text-white p-6 mt-10">
+      <div class="container mx-auto text-center">
+        <p>&copy; 2024 Serviços de Veículos. Todos os direitos reservados.</p>
+        <p class="mt-2">
+          Contato:
+          <a href="mailto:contato@servicosdetran.com" class="underline"
+            >contato@servicosdetran.com</a
+          >
+        </p>
+      </div>
+    </footer>
+  </body>
+</html>
