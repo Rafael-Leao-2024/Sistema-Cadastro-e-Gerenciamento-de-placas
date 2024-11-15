@@ -13,6 +13,10 @@
         Data de Criação: {{ plate.received_at.strftime('%Y-%m-%d %H:%M') if
         plate.received_at else "Não Recebida" }}
       </p>
+      <p class="text-gray-500">
+        Renavam {{ plate.renavan }} - CRLV {{ plate.crlv }}<br />
+        solicitante {{ plate.author.email }}
+      </p>
     </div>
 
     <form
