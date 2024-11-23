@@ -1,0 +1,27 @@
+{% extends 'base.html' %} {% block content %}
+<div class="container mx-auto px-4">
+  <h1 class="text-2xl font-bold text-center my-6">Lista de Usuários</h1>
+  <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+    {% for usuario in usuarios %}
+    <div class="bg-white shadow-md rounded-lg p-4">
+      <!-- Imagem do Usuário -->
+      <div class="flex justify-center mb-4">
+        <img
+          src="{{ url_for('static', filename='profile_pics/' + usuario.image_file) }}"
+          alt="Imagem de {{ usuario.nome }}"
+          class="w-24 h-24 rounded-full object-cover shadow-md"
+        />
+      </div>
+      <!-- Informações do Usuário -->
+      <h2 class="text-lg font-semibold text-center">
+        {{ usuario.username.title() }}
+      </h2>
+      <p class="text-sm text-gray-600 text-center">{{ usuario.email }}</p>
+      <p class="text-sm text-gray-600 text-center">
+        Quant. Serviços: {{ usuario.placas|length }}
+      </p>
+    </div>
+    {% endfor %}
+  </div>
+</div>
+{% endblock %}

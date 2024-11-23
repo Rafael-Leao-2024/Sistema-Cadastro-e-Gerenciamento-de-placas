@@ -26,7 +26,7 @@ class Placa(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     placa = db.Column(db.String(80), unique=False, nullable=False)
     renavan = db.Column(db.String(120), unique=False, nullable=False)
-    telefone = db.Column(db.String(120), unique=False, nullable=False)
+    endereco_placa = db.Column(db.String(120), unique=False, nullable=False)
     crlv = db.Column(db.String(80), nullable=False)
     date_create = db.Column(db.DateTime, nullable=False, default=datetime.now())
     id_user = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
@@ -35,3 +35,12 @@ class Placa(db.Model):
         
     def __repr__(self):
         return f"Placa(placa={self.placa})"
+    
+
+class Endereco(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    endereco = db.Column(db.String(255), nullable=True, default='Nenhum Endereço')  # Campo de endereço
+    id_user = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)  # FK para User
+
+    def __repr__(self):
+        return f"Endereco(endereco={self.endereco})"

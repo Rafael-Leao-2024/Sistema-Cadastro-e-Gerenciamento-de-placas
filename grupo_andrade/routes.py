@@ -1,6 +1,6 @@
 from flask import render_template, redirect, url_for, flash, request, abort
-from grupo_andrade.form import RegistrationForm, EmplacamentoForm, LoginForm
-from grupo_andrade.models import User, Placa
+from grupo_andrade.form import RegistrationForm, EmplacamentoForm, LoginForm, EnderecoForm
+from grupo_andrade.models import User, Placa, Endereco
 from flask_login import login_required, current_user, login_user, logout_user
 from . import app, db, bcrypt
 from sqlalchemy import desc
@@ -15,10 +15,15 @@ def homepage():
 @login_required
 def emplacamento():
     form = EmplacamentoForm()
+    if request.method == 'GET':
+        endereco = Endereco.query.filter_by(id_user=current_user.id).order_by(Endereco.id.desc()).first()
+        try:
+            form.endereco_placa.data = endereco.endereco.title()
+        except:
+            form.endereco_placa.data = Endereco.endereco.default.arg
     if form.validate_on_submit():
         # Lógica para processar os dados do formulário
-        placa = Placa(placa=form.placa.data, crlv=form.crlv.data, renavan=form.renavam.data, telefone=form.telefone.data, id_user=current_user.id)
-
+        placa = Placa(placa=form.placa.data, crlv=form.crlv.data, renavan=form.renavam.data, endereco_placa=form.endereco_placa.data, id_user=current_user.id)
         db.session.add(placa)
         db.session.commit() 
         flash(f'Placa {placa.placa.upper()} solicitada com Success!', 'success')
@@ -165,3 +170,30 @@ def delete(placa_id):
     db.session.commit()
     flash(f'Sua placa {placa.placa.upper()} foi deletada!', 'success')
     return redirect(url_for('minhas_placas'))
+
+
+@app.route('/endereco', methods=['GET', 'POST'])
+@login_required
+def endereco():
+    form = EnderecoForm()
+    if request.method == 'POST':
+        endereco = request.form['endereco']
+        novo_endereco = Endereco(endereco=endereco, id_user=current_user.id)
+        db.session.add(novo_endereco)
+        db.session.commit()
+        flash('Endereço Atualizado com Sucesso!', 'success')
+        return redirect(url_for('endereco'))  # Redireciona para a página inicial ou onde preferir
+    elif request.method == 'GET':
+        endereco = Endereco.query.filter_by(id_user=current_user.id).order_by(Endereco.id.desc()).first()
+        print(endereco)
+        if endereco:
+            form.endereco.data = endereco.endereco.title()
+        else:
+            form.endereco.data = Endereco.endereco.default.arg
+    return render_template('endereco.html', form=form, endereco=endereco)
+
+
+@app.route('/usuarios')
+def listar_usuarios():
+    usuarios = User.query.all()  # Consulta todos os usuários
+    return render_template('listar_usuarios.html', usuarios=usuarios)

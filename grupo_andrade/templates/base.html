@@ -72,6 +72,9 @@
             >Login</a
           >
           {% else %}
+          <a href="{{ url_for('endereco') }}" class="hover:underline"
+            >Adicionar Endereço</a
+          >
           <a href="{{ url_for('logout') }}" class="mx-4 hover:underline"
             >Sair</a
           >
