@@ -12,6 +12,10 @@
       href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css"
       rel="stylesheet"
     />
+    <link
+      href="https://fonts.googleapis.com/icon?family=Material+Icons"
+      rel="stylesheet"
+    />
 
     <style>
       /* Estilos adicionais para imitar a placa Mercosul */
@@ -50,32 +54,52 @@
     <!-- Cabeçalho -->
     <header class="bg-green-900 text-white p-4">
       <div class="container mx-auto flex justify-between items-center">
-        <div class="">
+        <div class="hover:text-yellow-500">
           <a href="{{ url_for('homepage') }}">
             <h1 class="text-3xl font-bold">Grupo Andrade</h1>
           </a>
           {% if current_user.is_authenticated %}
           <h3 class="text-center text-base font-medium">
-            Bem vindo(a) {{ current_user.username }}
+            Bem vindo(a) {{ current_user.username.title() }}
           </h3>
           {% endif %}
         </div>
         <nav>
-          <a href="{{ url_for('todas') }}" class="mx-4 hover:underline"
+          <a
+            href="{{ url_for('todas') }}"
+            class="mx-4 hover:no-underline hover:text-yellow-500"
             >Todas</a
           >
-          <a href="{{ url_for('minhas_placas') }}" class="mx-4 hover:underline"
+          <a
+            href="{{ url_for('minhas_placas') }}"
+            class="mx-4 hover:no-underline hover:text-yellow-500"
             >MInhas Placas</a
           >
+          <a
+            href="{{ url_for('consulta') }}"
+            class="mx-4 hover:no-underline hover:text-yellow-500"
+            >Pesquisar</a
+          >
           {% if not current_user.is_authenticated %}
-          <a href="{{ url_for('login') }}" class="mx-4 hover:underline"
+          <a
+            href="{{ url_for('login') }}"
+            class="mx-4 hover:no-underline hover:text-yellow-500"
             >Login</a
           >
           {% else %}
-          <a href="{{ url_for('endereco') }}" class="hover:underline"
+          <a
+            href="{{ url_for('endereco') }}"
+            class="hover:no-underline hover:text-yellow-500"
             >Adicionar Endereço</a
           >
-          <a href="{{ url_for('logout') }}" class="mx-4 hover:underline"
+          <a
+            href="{{ url_for('account') }}"
+            class="mx-4 hover:no-underline hover:text-yellow-500"
+            >Perfil</a
+          >
+          <a
+            href="{{ url_for('logout') }}"
+            class="mx-4 hover:no-underline hover:text-yellow-500"
             >Sair</a
           >
           {% endif %}

@@ -1,28 +1,28 @@
 {% extends "base.html" %} {% block content %}
 <div class="container mx-auto p-6">
   <h1 class="text-3xl font-bold text-center mb-8 text-gray-800">
-    Detalhes da Placa: {{ plate.placa.upper() }}
+    Detalhes da Placa: {{ placa.placa.upper() }}
   </h1>
 
   <div class="bg-white shadow-md rounded-lg p-6">
     <div class="text-center mb-6">
       <h2 class="text-xl font-semibold text-gray-700">
-        Placa: {{ plate.placa.upper() }}
+        Placa: {{ placa.placa.upper() }}
       </h2>
       <p class="text-gray-500">
-        Data de Criação: {{ plate.received_at.strftime('%Y-%m-%d %H:%M') if
-        plate.received_at else "Não Recebida" }}
+        Data de Criação: {{ placa.received_at.strftime('%Y-%m-%d %H:%M') if
+        placa.received_at else "Não Recebida" }}
       </p>
       <p class="text-gray-500">
-        Renavam {{ plate.renavan }} - CRLV {{ plate.crlv }}<br />
-        solicitante {{ plate.author.email }}
+        Renavam {{ placa.renavan }} - CRLV {{ placa.crlv }}<br />
+        solicitante {{ placa.author.email }}
       </p>
-      <p class="text-gray-500">Endereço {{ plate.endereco_placa }}<br /></p>
+      <p class="text-gray-500">Endereço {{ placa.endereco_placa }}<br /></p>
     </div>
 
     <form
       method="POST"
-      action="{{ url_for('placa_detail', plate_id=plate.id) }}"
+      action="{{ url_for('placa_detail', placa_id=placa.id) }}"
     >
       {{ form.hidden_tag() }}
       <label class="inline-flex items-center mt-3">
@@ -32,15 +32,15 @@
           class="form-checkbox h-6 w-6"
           {%
           if
-          plate.received
+          placa.received
           %}checked{%
           endif
           %}
         />
         <span
-          class="ml-2 text-lg {{ 'text-green-600' if plate.received else 'text-red-800' }}"
+          class="ml-2 text-lg {{ 'text-green-600' if placa.received else 'text-red-800' }}"
         >
-          {{ "Recebida" if plate.received else "Placa Pendente Click para
+          {{ "Recebida" if placa.received else "Placa Pendente Click para
           confirma recebimento" }}
         </span>
       </label>
@@ -85,7 +85,7 @@
       >
         Fechar
       </button>
-      <form action="{{ url_for('delete', placa_id=plate.id) }}" method="POST">
+      <form action="{{ url_for('delete', placa_id=placa.id) }}" method="POST">
         <button
           type="submit"
           class="px-4 py-2 bg-red-500 text-white rounded-md hover:bg-red-600 transition"
@@ -99,6 +99,15 @@
 
 <!-- Botão para abrir o modal -->
 <div class="flex mt-2 justify-center space-x-3">
+  <a href="{{ url_for('editar_placa', placa_id=placa.id) }}">
+    <button
+      class="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-900 transition"
+      onclick=""
+    >
+      Update Placa
+    </button></a
+  >
+
   <button
     class="px-4 py-2 bg-red-700 text-white rounded-md hover:bg-red-500 transition"
     onclick="openModal()"

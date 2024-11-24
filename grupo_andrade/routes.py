@@ -1,11 +1,14 @@
 from flask import render_template, redirect, url_for, flash, request, abort
-from grupo_andrade.form import RegistrationForm, EmplacamentoForm, LoginForm, EnderecoForm
+from grupo_andrade.form import RegistrationForm, EmplacamentoForm, LoginForm, EnderecoForm, UpdateAccountForm, ConsultarForm
 from grupo_andrade.models import User, Placa, Endereco
 from flask_login import login_required, current_user, login_user, logout_user
 from . import app, db, bcrypt
 from sqlalchemy import desc
 from sqlalchemy.orm import joinedload
 from datetime import datetime, timedelta
+import secrets
+import os
+from PIL import Image
 
 @app.route("/")
 def homepage():
@@ -23,7 +26,7 @@ def emplacamento():
             form.endereco_placa.data = Endereco.endereco.default.arg
     if form.validate_on_submit():
         # Lógica para processar os dados do formulário
-        placa = Placa(placa=form.placa.data, crlv=form.crlv.data, renavan=form.renavam.data, endereco_placa=form.endereco_placa.data, id_user=current_user.id)
+        placa = Placa(placa=form.placa.data.upper(), crlv=form.crlv.data, renavan=form.renavam.data, endereco_placa=form.endereco_placa.data, id_user=current_user.id)
         db.session.add(placa)
         db.session.commit() 
         flash(f'Placa {placa.placa.upper()} solicitada com Success!', 'success')
@@ -111,15 +114,15 @@ def register():
     return render_template('register.html', form=form)
 
 
-@app.route('/minhas-placas/<int:plate_id>', methods=['GET', 'POST'])
+@app.route('/minhas-placas/<int:placa_id>', methods=['GET', 'POST'])
 @login_required
-def placa_detail(plate_id):
+def placa_detail(placa_id):
     # Busca a placa pelo ID
     form = EmplacamentoForm()
-    plate = Placa.query.get_or_404(plate_id)
+    placa = Placa.query.get_or_404(placa_id)
 
     # Verifica se o usuário logado é o dono da placa
-    if plate.id_user != current_user.id:
+    if placa.id_user != current_user.id:
         #abort(403)  # Ou redireciona para uma página de erro
         return render_template('erros/erro.html')
 
@@ -127,26 +130,26 @@ def placa_detail(plate_id):
         # Verifica se a caixa de seleção foi marcada
         received = request.form.get('received') == 'on'
 
-        if received and not plate.received:
+        if received and not placa.received:
             # Marca como recebido e define a data/hora atual
-            plate.received = True
-            plate.received_at = datetime.now()
-            flash(f"Placa {plate.placa.upper()} Recebida com sucesso.", 'success')
-        elif not received and plate.received:
+            placa.received = True
+            placa.received_at = datetime.now()
+            flash(f"Placa {placa.placa.upper()} Recebida com sucesso.", 'success')
+        elif not received and placa.received:
             # Verifica se o tempo limite de 10 minutos já passou
-            time_limit = plate.received_at + timedelta(minutes=10)
+            time_limit = placa.received_at + timedelta(minutes=10)
             if datetime.now() <= time_limit:
-                plate.received = False
-                plate.received_at = None  # Opcional: limpa o campo
+                placa.received = False
+                placa.received_at = None  # Opcional: limpa o campo
             else:
                 flash("Não é possível desmarcar após 10 minutos.", 'info')
         
         # Salva as alterações no banco de dados
         db.session.commit()
         
-        return redirect(url_for('placa_detail', plate_id=plate.id))  # Redireciona para a mesma página para refletir a alteração
+        return redirect(url_for('placa_detail', placa_id=placa.id))  # Redireciona para a mesma página para refletir a alteração
     
-    return render_template('placa_detail.html', plate=plate, form=form)
+    return render_template('placa_detail.html', placa=placa, form=form)
 
 
 # rota de deletar postagem
@@ -197,3 +200,80 @@ def endereco():
 def listar_usuarios():
     usuarios = User.query.all()  # Consulta todos os usuários
     return render_template('listar_usuarios.html', usuarios=usuarios)
+
+
+
+def save_picture(form_picture):
+    random_hex = secrets.token_hex(8)
+    _, f_ext = os.path.splitext(form_picture.filename)
+    picture_fn = random_hex + f_ext
+    picture_path = os.path.join(app.root_path, 'static/profile_pics', picture_fn)
+
+    output_size = (125, 125)
+    i = Image.open(form_picture)
+    i.thumbnail(output_size)
+    i.save(picture_path)
+
+    return picture_fn
+
+
+@app.route("/account", methods=['GET', 'POST'])
+@login_required
+def account():
+    form = UpdateAccountForm()
+    if form.validate_on_submit():
+        if form.picture.data:
+            picture_file = save_picture(form.picture.data)
+            current_user.image_file = picture_file
+        current_user.username = form.username.data
+        current_user.email = form.email.data
+        db.session.commit()
+        flash('Your account has been updated!', 'success')
+        return redirect(url_for('account'))
+    elif request.method == 'GET':
+        form.username.data = current_user.username
+        form.email.data = current_user.email
+    image_file = url_for('static', filename='profile_pics/' + current_user.image_file)
+    return render_template('account.html', title='Account', form=form, image_file=image_file)
+
+
+
+@app.route('/consulta', methods=['GET', 'POST'])
+@login_required
+def consulta():
+    resultados = []
+    form = ConsultarForm()
+    if request.method == 'POST':
+        placa = request.form.get('placa')
+        placa = placa.upper()
+        if placa:
+            #resultado = Placa.query.filter_by(placa=placa).first()
+            #resultado = Placa.query.filter(Placa.placa.ilike(f"%{placa}%")).all()
+            resultados = Placa.query.filter(Placa.placa.ilike(f"%{placa}%")).order_by(Placa.date_create.desc()).all()
+            if not resultados:
+                flash("Placa não encontrada!", "warning")
+            else:
+                flash(f"Resultados Encontrados {len(resultados)}", "success")
+    return render_template('consulta.html', resultados=resultados, form=form)
+
+
+@app.route('/editar/<int:placa_id>', methods=['GET', 'POST'])
+@login_required
+def editar_placa(placa_id):
+    placa = Placa.query.get_or_404(placa_id)
+
+    # Verifica se o usuário é o autor da placa
+    if placa.id_user != current_user.id:
+        flash("Você não tem permissão para editar esta placa.", "danger")
+        return redirect(url_for('placa_detail' , placa_id=placa.id))
+
+    if request.method == 'POST':
+        placa.placa = request.form.get('placa')
+        placa.renavan = request.form.get('renavan')
+        placa.endereco_placa = request.form.get('endereco_placa')
+        placa.crlv = request.form.get('crlv')
+        db.session.commit()
+        flash(f"Os dados da placa {placa.placa.upper()} foram atualizados com sucesso!", "success")
+        return redirect(url_for('placa_detail', placa_id=placa.id))
+
+    return render_template('editar_placa.html', placa=placa)

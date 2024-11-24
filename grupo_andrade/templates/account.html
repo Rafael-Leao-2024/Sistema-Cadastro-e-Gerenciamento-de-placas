@@ -1,0 +1,84 @@
+{% extends "base.html" %} {% block content %}
+<div
+  class="bg-white mt-6 mb-6 p-8 rounded-lg shadow-md w-full max-w-lg mx-auto"
+>
+  <!-- Informações do Usuário -->
+  <div class="flex items-center mb-8">
+    <img
+      class="w-25 h-25 rounded-full border-3 border-green-500"
+      src="{{ image_file }}"
+      alt="Foto do Usuário"
+    />
+    <div class="ml-6">
+      <h2 class="text-2xl font-bold text-green-700">
+        {{ current_user.username }}
+      </h2>
+      <p class="text-sm text-gray-600">{{ current_user.email }}</p>
+    </div>
+  </div>
+
+  <!-- Formulário -->
+  <form method="POST" action="" enctype="multipart/form-data" class="space-y-6">
+    {{ form.hidden_tag() }}
+
+    <fieldset>
+      <legend class="text-xl font-semibold text-green-700 border-b pb-2 mb-4">
+        Informações da Conta
+      </legend>
+
+      <!-- Campo de Nome de Usuário -->
+      <div>
+        {{ form.username.label(class="block text-gray-700 font-medium mb-2") }}
+        {% if form.username.errors %} {{ form.username(class="w-full px-4 py-3
+        border-2 border-red-500 rounded-lg focus:outline-none focus:ring-2
+        focus:ring-red-300") }}
+        <div class="text-red-500 text-sm mt-1">
+          {% for error in form.username.errors %}
+          <span>{{ error }}</span>
+          {% endfor %}
+        </div>
+        {% else %} {{ form.username(class="w-full px-4 py-3 border-2
+        border-green-300 rounded-lg focus:outline-none focus:ring-2
+        focus:ring-green-400") }} {% endif %}
+      </div>
+
+      <!-- Campo de Email -->
+      <div>
+        {{ form.email.label(class="block text-gray-700 font-medium mb-2") }} {%
+        if form.email.errors %} {{ form.email(class="w-full px-4 py-3 border-2
+        border-red-500 rounded-lg focus:outline-none focus:ring-2
+        focus:ring-red-300") }}
+        <div class="text-red-500 text-sm mt-1">
+          {% for error in form.email.errors %}
+          <span>{{ error }}</span>
+          {% endfor %}
+        </div>
+        {% else %} {{ form.email(class="w-full px-4 py-3 border-2
+        border-green-300 rounded-lg focus:outline-none focus:ring-2
+        focus:ring-green-400") }} {% endif %}
+      </div>
+
+      <!-- Campo de Foto -->
+      <div>
+        {{ form.picture.label(class="block text-gray-700 font-medium mb-2") }}
+        {{ form.picture(class="block w-full text-gray-600 border-2
+        border-green-300 rounded-lg file:mr-4 file:py-2 file:px-4
+        file:rounded-lg file:border-0 file:bg-green-100 file:text-green-700
+        hover:file:bg-green-200") }} {% if form.picture.errors %}
+        <div class="text-red-500 text-sm mt-1">
+          {% for error in form.picture.errors %}
+          <span>{{ error }}</span>
+          {% endfor %}
+        </div>
+        {% endif %}
+      </div>
+    </fieldset>
+
+    <!-- Botão de Enviar -->
+    <div class="text-right">
+      {{ form.submit(class="bg-green-700 text-white px-6 py-3 rounded-lg
+      shadow-md hover:bg-green-800 focus:outline-none") }}
+    </div>
+  </form>
+</div>
+{% endblock content %}

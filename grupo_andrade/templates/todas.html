@@ -3,7 +3,7 @@
   <h1 class="text-3xl font-bold text-center mb-8 text-gray-800">
     Placas dos Usuários
     <a href="{{ url_for('emplacamento') }}"
-      ><i class="fas fa-plus-circle text-green-500 ml-2"></i
+      ><i class="fas fa-plus-circle text-blue-700 ml-2"></i
     ></a>
   </h1>
 
@@ -15,7 +15,7 @@
     </div>
 
     {% for placa in placas %}
-    <a href="{{ url_for('placa_detail', plate_id=placa.id) }}">
+    <a href="{{ url_for('placa_detail', placa_id=placa.id) }}">
       <div
         class="ml-20 grid grid-cols-4 flex items-center bg-gray-50 p-4 mb-4 rounded-lg shadow-sm"
       >
