@@ -40,6 +40,36 @@
       }
     </style>
     <script>
+      // Função para atualizar o tema
+      function alterarTema() {
+        let elemento = document.getElementById('meuElementoBody');
+        // Alterna as classes de tema
+        if (elemento.classList.contains('bg-black')) {
+          elemento.classList.remove('bg-black', 'text-white');
+          elemento.classList.add('bg-gray-200', 'text-gray-800');
+          localStorage.setItem('tema', 'claro'); // Salva no localStorage
+        } else {
+          elemento.classList.remove('bg-gray-200', 'text-gray-800');
+          elemento.classList.add('bg-black', 'text-white');
+          localStorage.setItem('tema', 'escuro'); // Salva no localStorage
+        }
+      }
+
+      // Função para restaurar o tema ao carregar a página
+      function restaurarTema() {
+        let elemento = document.getElementById('meuElementoBody');
+        const tema = localStorage.getItem('tema');
+        if (tema === 'escuro') {
+          elemento.classList.add('bg-black', 'text-green-800');
+          elemento.classList.remove('bg-gray-200', 'text-gray-800');
+        } else {
+          elemento.classList.add('bg-gray-200', 'text-gray-800');
+          elemento.classList.remove('bg-black', 'text-white');
+        }
+      }
+
+      document.addEventListener('DOMContentLoaded', restaurarTema);
+
       // Função para atualizar a placa em tempo real
       function updatePlate() {
         const placaInput = document.getElementById('placa');
@@ -47,9 +77,11 @@
         placaDisplay.textContent = placaInput.value.toUpperCase();
       }
     </script>
+    <script src="https://cdn.tailwindcss.com"></script>
   </head>
   <body
-    class="flex flex-col h-screen justify-between bg-gray-100 text-gray-800"
+    id="meuElementoBody"
+    class="flex flex-col h-screen justify-between bg-gray-200 text-gray-800"
   >
     <!-- Cabeçalho -->
     <header class="bg-green-900 text-white p-4">
@@ -65,6 +97,12 @@
           {% endif %}
         </div>
         <nav>
+          <button
+            onclick="alterarTema()"
+            class="bg-gray-800 text-white px-4 py-2 rounded-lg shadow-md hover:bg-gray-700"
+          >
+            Alterar Tema
+          </button>
           <a
             href="{{ url_for('todas') }}"
             class="mx-4 hover:no-underline hover:text-yellow-500"
