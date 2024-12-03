@@ -1,9 +1,9 @@
-{% extends 'base.html' %} {% block content %}
+{% extends 'base.html' %}{% block title %}lista de usuarios{% endblock %} {%
+block content %}
 <div class="container mx-auto px-4">
   <h1 class="text-2xl font-bold text-center my-6">Lista de Usuários</h1>
   <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-    {% if usuarios %}
-    {% for usuario in usuarios %}
+    {% if usuarios %} {% for usuario in usuarios %}
     <div class="bg-white shadow-md rounded-lg p-4">
       <!-- Imagem do Usuário -->
       <div class="flex justify-center mb-4">
@@ -22,9 +22,7 @@
         Quant. Serviços: {{ usuario.placas|length }}
       </p>
     </div>
-    {% endfor %}
-    {% endif %}
-    
+    {% endfor %} {% endif %}
   </div>
 </div>
 {% endblock %}

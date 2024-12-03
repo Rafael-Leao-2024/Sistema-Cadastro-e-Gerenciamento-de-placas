@@ -12,7 +12,7 @@ from PIL import Image
 
 @app.route("/")
 def homepage():
-    return render_template('homepage.html')
+    return render_template('homepage.html', titulo='homepage')
 
 @app.route("/emplacar", methods=["GET", "POST"])
 @login_required
@@ -32,8 +32,7 @@ def emplacamento():
         flash(f'Placa {placa.placa.upper()} solicitada com Success!', 'success')
         # Exemplo: salvar no banco de dados ou fazer algo com os dados
         return redirect(url_for('minhas_placas'))
-    return render_template('emplacar.html', form=form)
-
+    return render_template('emplacar.html', form=form, titulo='emplacar')
 
 @app.route("/logout")
 def logout():
@@ -55,7 +54,7 @@ def minhas_placas():
                        .filter_by(id_user=current_user.id)\
                        .order_by(desc(Placa.date_create))\
                        .paginate(page=page, per_page=per_page, error_out=False)
-    return render_template('minhas_placas.html', placas=placas)
+    return render_template('minhas_placas.html', placas=placas, titulo='minhas placas')
 
 
 
@@ -70,7 +69,7 @@ def todas():
                         .paginate(page=page, per_page=per_page, error_out=False)
         # Conta o total de placas na base de dados
         total_placas = Placa.query.count()
-    return render_template('todas.html', placas=placas, total_placas=total_placas)
+    return render_template('todas.html', placas=placas, total_placas=total_placas, titulo='todas')
 
 
 @app.route('/login', methods=['GET', 'POST'])
@@ -90,7 +89,7 @@ def login():
         else:
             flash('email e senha invalido', 'danger')
             return redirect(url_for('login')) 
-    return render_template('login.html', form=form)
+    return render_template('login.html', form=form, titulo='login')
 
 
 @app.route("/register", methods=['GET', 'POST'])
@@ -111,7 +110,7 @@ def register():
         else:
             flash(f'Username e Email ja exiti por favor escolha outros', 'info')
             return redirect(url_for('register')) 
-    return render_template('register.html', form=form)
+    return render_template('register.html', form=form, titulo='register')
 
 
 @app.route('/minhas-placas/<int:placa_id>', methods=['GET', 'POST'])
@@ -149,7 +148,7 @@ def placa_detail(placa_id):
         
         return redirect(url_for('placa_detail', placa_id=placa.id))  # Redireciona para a mesma página para refletir a alteração
     
-    return render_template('placa_detail.html', placa=placa, form=form)
+    return render_template('placa_detail.html', placa=placa, form=form, titulo='detalhes')
 
 
 # rota de deletar postagem

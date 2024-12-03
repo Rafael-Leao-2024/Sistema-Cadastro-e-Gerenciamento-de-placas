@@ -1,26 +1,25 @@
- /* Estilos adicionais para imitar a placa Mercosul */
- #placaDisplay {
-    width: 180px;
-    border: 4px solid #003399; /* Borda azul escuro */
-    color: #003399; /* Texto azul */
-    background-color: white; /* Fundo branco */
-    font-family: Arial, sans-serif;
-    text-align: center;
-    letter-spacing: 2px;
-    padding: 10px 0;
-    border-radius: 8px;
-  }
-  .faixa-mercosul {
-    background-color: #003399; /* Faixa azul */
-    color: white;
-    font-size: 10px;
-    padding: 2px;
-    border-top-left-radius: 4px;
-    border-top-right-radius: 4px;
-  }
+/* Estilos adicionais para imitar a placa Mercosul */
+#placaDisplay {
+  width: 180px;
+  border: 4px solid #003399; /* Borda azul escuro */
+  color: #003399; /* Texto azul */
+  background-color: white; /* Fundo branco */
+  font-family: Arial, sans-serif;
+  text-align: center;
+  letter-spacing: 2px;
+  padding: 10px 0;
+  border-radius: 8px;
+}
+.faixa-mercosul {
+  background-color: #003399; /* Faixa azul */
+  color: white;
+  font-size: 10px;
+  padding: 2px;
+  border-top-left-radius: 4px;
+  border-top-right-radius: 4px;
+}
 
-
-  /* Faixa tamanho padrao do icone */
+/* Faixa tamanho padrao do icone */
 .icone-tamanho-padrao {
-  font-size: 28px;
+  font-size: 29px;
 }

@@ -1,4 +1,5 @@
-{% extends "base.html" %} {% block content %}
+{% extends "base.html" %} {% block title %}{{ titulo }}{% endblock %} {% block
+content %}
 <div class="container mx-auto p-6">
   <h1 class="text-3xl font-bold text-center mb-8 text-gray-800">
     Placas dos Usuários
@@ -25,7 +26,7 @@
           <!-- Exibição da Placa no estilo Mercosul -->
           <div class="inline-block">
             <div
-              class="faixa-mercosul  text-center text-sm text-white bg-blue-600 py-1 px-2 mb-2"
+              class="faixa-mercosul text-center text-sm text-white bg-blue-600 py-1 px-2 mb-2"
             >
               BRASIL
             </div>
