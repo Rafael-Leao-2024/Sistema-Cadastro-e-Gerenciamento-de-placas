@@ -198,6 +198,7 @@ def endereco():
 
 @app.route('/usuarios')
 def listar_usuarios():
+
     usuarios = User.query.all()  # Consulta todos os usuários
     return render_template('listar_usuarios.html', usuarios=usuarios)
 
