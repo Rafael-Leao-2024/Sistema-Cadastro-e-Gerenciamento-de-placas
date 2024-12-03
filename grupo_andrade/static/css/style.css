@@ -18,3 +18,9 @@
     border-top-left-radius: 4px;
     border-top-right-radius: 4px;
   }
+
+
+  /* Faixa tamanho padrao do icone */
+.icone-tamanho-padrao {
+  font-size: 28px;
+}
