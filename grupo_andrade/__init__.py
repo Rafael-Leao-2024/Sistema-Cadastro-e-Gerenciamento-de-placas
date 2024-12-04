@@ -45,5 +45,5 @@ login_manager.login_message_category = 'info'
 
 from . import routes
 
-
-
+print('banco onlina desligado no local')
+print(os.getenv('DATABASE_URL'))
