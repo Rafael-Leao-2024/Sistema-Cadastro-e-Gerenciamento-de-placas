@@ -6,7 +6,6 @@ from flask_login import LoginManager
 from flask_migrate import Migrate
 from dotenv import load_dotenv
 import os
-import sqlalchemy
 
 app = Flask(__name__)
 
@@ -43,17 +42,6 @@ migrate = Migrate(app, db)
 
 login_manager.login_view = 'login'
 login_manager.login_message_category = 'info'
-
-from grupo_andrade import models
-
-engine = sqlalchemy.create_engine(app.config['SQLALCHEMY_DATABASE_URI'])
-inspector = sqlalchemy.inspect(engine)
-if not inspector.has_table('user'):
-    with app.app_context():
-        db.drop_all()
-        db.create_all()
-else:
-    print('ja exite')
 
 from . import routes
 
