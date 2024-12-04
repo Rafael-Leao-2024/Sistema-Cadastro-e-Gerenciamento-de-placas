@@ -21,8 +21,8 @@ app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 # Caso esteja em produção (Railway), usará o banco de dados configurado no Railway
 
 # Caso contrário, usará o SQLite local
-if 'DATABASE_URL' in os.environ:
-    app.config['SQLALCHEMY_DATABASE_URI'] = os.environ['DATABASE_URL']
+if os.getenv('DATABASE_URL'):
+    app.config['SQLALCHEMY_DATABASE_URI'] = os.getenv('DATABASE_URL')
 else:
     # Para desenvolvimento local, use SQLite
     app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///banco.db'
