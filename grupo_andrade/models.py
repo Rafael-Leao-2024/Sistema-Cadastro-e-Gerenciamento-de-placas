@@ -28,7 +28,7 @@ class Placa(db.Model):
     renavan = db.Column(db.String(120), unique=False, nullable=False)
     endereco_placa = db.Column(db.String(120), unique=False, nullable=False)
     crlv = db.Column(db.String(80), nullable=False)
-    date_create = db.Column(db.DateTime, nullable=False, default=datetime.now())
+    date_create = db.Column(db.DateTime, nullable=False, default=datetime.now)
     id_user = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
     received = db.Column(db.Boolean, default=False)
     received_at = db.Column(db.DateTime, nullable=True, default=datetime.now)  # Hora da confirmação
