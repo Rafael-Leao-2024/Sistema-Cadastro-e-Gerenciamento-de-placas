@@ -39,7 +39,7 @@ content %}
             Placa: {{ placa.placa.upper() }}
           </p>
           <p class="text-gray-600">
-            Data: {{ format_datetime(placa.date_create) }}
+            Data: {{ placa.date_create.strftime('%d-%m-%Y') }}
           </p>
           <p class="text-gray-600">
             Hora: {{ placa.date_create.strftime('%H:%M') }}
