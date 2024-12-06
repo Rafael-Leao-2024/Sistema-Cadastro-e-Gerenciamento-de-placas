@@ -6,6 +6,7 @@ from flask_login import LoginManager
 from flask_migrate import Migrate
 from dotenv import load_dotenv
 import os
+from grupo_andrade.utilidades import format_data, format_hora, format_data_completa
 
 app = Flask(__name__)
 
@@ -15,6 +16,12 @@ load_dotenv()
 app.config['SECRET_KEY'] = os.environ.get('SECRET_KEY', 'suachavesecretabvvavdvBDABUSYNJBUBWBBBYQ')
 #app.config['SECRET_KEY'] = 'suachavesecretabvvavdvBDABUSYNJBUBWBBBYQ'
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
+
+app.jinja_env.filters['format_data'] = format_data
+app.jinja_env.filters['format_hora'] = format_hora
+app.jinja_env.filters['format_data_completa'] = format_data_completa
+
+
 
 # Verifica se a variável de ambiente DATABASE_URL existe
 

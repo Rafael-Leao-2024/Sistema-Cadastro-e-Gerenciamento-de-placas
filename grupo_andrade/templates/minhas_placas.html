@@ -47,12 +47,8 @@ content %}
           <p class="text-lg font-semibold text-gray-800">
             Placa: {{ placa.placa.upper() }}
           </p>
-          <p class="text-gray-600">
-            Data: {{ placa.date_create.strftime('%Y-%m-%d') }}
-          </p>
-          <p class="text-gray-600">
-            Hora: {{ placa.date_create.strftime('%H:%M') }}
-          </p>
+          <p class="text-gray-600">Data: {{ placa.date_create|format_data }}</p>
+          <p class="text-gray-600">Hora: {{ placa.date_create|format_hora }}</p>
         </div>
         <div class="flex flex-col space-y-1">
           <p class="text-lg font-semibold text-gray-800">
