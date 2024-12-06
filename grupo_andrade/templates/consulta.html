@@ -51,7 +51,7 @@ content %}
         <p class="text-gray-700"><strong>CRLV:</strong> {{ resultado.crlv }}</p>
         <p class="text-gray-700">
           <strong>Data de Registro:</strong> {{
-          resultado.date_create.strftime('%d/%m/%Y %H:%M') }}
+          resultado.date_create|format_data_completa }}
         </p>
       </div>
       {% endfor %}
