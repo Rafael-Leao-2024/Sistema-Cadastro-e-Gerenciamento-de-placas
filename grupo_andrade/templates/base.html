@@ -31,84 +31,10 @@
     class="flex flex-col h-screen justify-between bg-gray-200 text-gray-800"
   >
     <!-- Cabeçalho -->
-    <header class="bg-green-900 text-white p-4">
-      <div class="container mx-auto flex justify-between items-center">
-        <div class="hover:text-yellow-500">
-          <a href="{{ url_for('homepage') }}">
-            <h1 class="text-3xl font-bold">Grupo Andrade</h1>
-          </a>
-          {% if current_user.is_authenticated %}
-          <h3 class="text-center text-base font-medium">
-            Bem vindo(a) {{ current_user.username.title() }}
-          </h3>
-          {% endif %}
-        </div>
-        <nav>
-          <button
-            onclick="alterarTema()"
-            class="bg-gray-800 text-white px-4 py-2 rounded-lg shadow-md hover:bg-gray-700"
-          >
-            themes
-          </button>
-          <a
-            href="{{ url_for('todas') }}"
-            class="mx-4 hover:no-underline hover:text-yellow-500"
-            >Todas</a
-          >
-          <a
-            href="{{ url_for('minhas_placas') }}"
-            class="mx-4 hover:no-underline hover:text-yellow-500"
-            >MInhas Placas</a
-          >
-          <a
-            href="{{ url_for('consulta') }}"
-            class="mx-4 hover:no-underline hover:text-yellow-500"
-            ><ion-icon
-              name="search-outline"
-              class="icone-tamanho-padrao"
-            ></ion-icon
-          ></a>
-          {% if not current_user.is_authenticated %}
-          <a
-            href="{{ url_for('login') }}"
-            class="mx-4 hover:no-underline hover:text-yellow-500"
-            ><ion-icon
-              name="enter-outline"
-              class="icone-tamanho-padrao"
-            ></ion-icon
-          ></a>
-          {% else %}
-          <a
-            href="{{ url_for('endereco') }}"
-            class="hover:no-underline hover:text-yellow-500"
-            ><ion-icon
-              name="location-outline"
-              class="icone-tamanho-padrao"
-            ></ion-icon
-          ></a>
-          <a
-            href="{{ url_for('account') }}"
-            class="mx-4 hover:no-underline hover:text-yellow-500"
-            ><ion-icon
-              name="person-outline"
-              class="icone-tamanho-padrao"
-            ></ion-icon
-          ></a>
-          <a
-            href="{{ url_for('logout') }}"
-            class="mx-4 hover:no-underline hover:text-yellow-500"
-            ><ion-icon
-              name="log-out-outline"
-              class="icone-tamanho-padrao"
-            ></ion-icon
-          ></a>
-          {% endif %}
-        </nav>
-      </div>
-    </header>
-    {% with messages = get_flashed_messages(with_categories=true) %} {% if
-    messages %} {% for category, message in messages %} {% if category ==
-    'success' %} {# Alterar 'success' para a categoria desejada #}
+    {% include 'header.html' %} {% with messages =
+    get_flashed_messages(with_categories=true) %} {% if messages %} {% for
+    category, message in messages %} {% if category == 'success' %} {# Alterar
+    'success' para a categoria desejada #}
     <div
       class="p-4 mb-4 text-center text-base font-medium rounded-lg bg-green-100 text-green-800"
     >

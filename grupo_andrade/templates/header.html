@@ -1,0 +1,81 @@
+<header class="bg-green-900 text-white p-4">
+  <div class="container mx-auto flex flex-wrap justify-between items-center">
+    <!-- Logo e saudação -->
+    <div class="hover:text-yellow-500 mb-2 md:mb-0">
+      <a href="{{ url_for('homepage') }}">
+        <h1 class="text-3xl font-bold">Grupo Andrade</h1>
+      </a>
+      {% if current_user.is_authenticated %}
+      <h3 class="text-center text-base font-medium">
+        Bem vindo(a) {{ current_user.username.title() }}
+      </h3>
+      {% endif %}
+    </div>
+
+    <!-- Botão para menu em telas pequenas -->
+    <button
+      id="menu-button"
+      class="block md:hidden bg-gray-800 text-white px-4 py-2 rounded-lg shadow-md hover:bg-gray-700"
+      onclick="document.getElementById('menu-items').classList.toggle('hidden')"
+    >
+      Menu
+    </button>
+
+    <!-- Navegação -->
+    <nav
+      id="menu-items"
+      class="w-full md:w-auto md:flex md:items-center hidden"
+    >
+      <button
+        onclick="alterarTema()"
+        class="bg-gray-800 text-white px-4 py-2 rounded-lg shadow-md hover:bg-gray-700"
+      >
+        Themes
+      </button>
+      <a
+        href="{{ url_for('todas') }}"
+        class="mx-4 hover:no-underline hover:text-yellow-500"
+        >Todas</a
+      >
+      <a
+        href="{{ url_for('minhas_placas') }}"
+        class="mx-4 hover:no-underline hover:text-yellow-500"
+        >Minhas Placas</a
+      >
+      <a
+        href="{{ url_for('consulta') }}"
+        class="mx-4 hover:no-underline hover:text-yellow-500"
+        ><ion-icon name="search-outline" class="icone-tamanho-padrao"></ion-icon
+      ></a>
+      {% if not current_user.is_authenticated %}
+      <a
+        href="{{ url_for('login') }}"
+        class="mx-4 hover:no-underline hover:text-yellow-500"
+        ><ion-icon name="enter-outline" class="icone-tamanho-padrao"></ion-icon
+      ></a>
+      {% else %}
+      <a
+        href="{{ url_for('endereco') }}"
+        class="hover:no-underline hover:text-yellow-500"
+        ><ion-icon
+          name="location-outline"
+          class="icone-tamanho-padrao"
+        ></ion-icon
+      ></a>
+      <a
+        href="{{ url_for('account') }}"
+        class="mx-4 hover:no-underline hover:text-yellow-500"
+        ><ion-icon name="person-outline" class="icone-tamanho-padrao"></ion-icon
+      ></a>
+      <a
+        href="{{ url_for('logout') }}"
+        class="mx-4 hover:no-underline hover:text-yellow-500"
+        ><ion-icon
+          name="log-out-outline"
+          class="icone-tamanho-padrao"
+        ></ion-icon
+      ></a>
+      {% endif %}
+    </nav>
+  </div>
+</header>
