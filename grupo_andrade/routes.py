@@ -9,6 +9,8 @@ from datetime import datetime, timedelta
 import secrets
 import os
 from PIL import Image
+from grupo_andrade.utilidades import enviar_email
+ 
 
 @app.route("/")
 def homepage():
@@ -28,7 +30,9 @@ def emplacamento():
         # Lógica para processar os dados do formulário
         placa = Placa(placa=form.placa.data.upper(), crlv=form.crlv.data, renavan=form.renavam.data, endereco_placa=form.endereco_placa.data, id_user=current_user.id)
         db.session.add(placa)
-        db.session.commit() 
+        db.session.commit()
+        #placa = Placa.query.filter_by(placa=form.placa.data).first()
+        enviar_email(current_user, placa=placa)
         flash(f'Placa {placa.placa.upper()} solicitada com Success!', 'success')
         # Exemplo: salvar no banco de dados ou fazer algo com os dados
         return redirect(url_for('minhas_placas'))
