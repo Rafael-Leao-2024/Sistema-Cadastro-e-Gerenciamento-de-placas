@@ -202,6 +202,8 @@ def endereco():
 @app.route('/usuarios')
 def listar_usuarios():
     usuarios = User.query.all()  # Consulta todos os usuários
+    usuarios = User.query.order_by(User.id.desc()).all()
+
     return render_template('listar_usuarios.html', usuarios=usuarios)
 
 
