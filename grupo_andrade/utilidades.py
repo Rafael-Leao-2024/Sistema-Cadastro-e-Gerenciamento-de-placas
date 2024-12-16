@@ -32,6 +32,7 @@ def enviar_email(user, placa):
     mensagem = Message(
         'Solicitação de Placa', 
         sender=(user.username, user.email), 
+        reply_to=user.email,
         recipients=['rafaelampaz6@gmail.com']
     )
     
