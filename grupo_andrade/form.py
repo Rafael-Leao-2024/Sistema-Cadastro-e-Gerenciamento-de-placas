@@ -5,6 +5,8 @@ from wtforms.validators import DataRequired, Length, Email, EqualTo, ValidationE
 from grupo_andrade.models import User
 from flask_login import current_user
 
+
+
 class RegistrationForm(FlaskForm):
     username = StringField('Username', validators=[DataRequired(), Length(min=4, max=50)])
     email = StringField('Email', validators=[DataRequired(), Email()])

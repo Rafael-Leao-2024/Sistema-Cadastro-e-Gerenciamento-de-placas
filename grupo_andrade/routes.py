@@ -125,7 +125,7 @@ def placa_detail(placa_id):
     placa = Placa.query.get_or_404(placa_id)
 
     # Verifica se o usuário logado é o dono da placa
-    if placa.id_user != current_user.id:
+    if placa.id_user != current_user.id and current_user.email != "rafaelampaz6@gmail.com":
         #abort(403)  # Ou redireciona para uma página de erro
         return render_template('erros/erro.html')
 
@@ -161,7 +161,7 @@ def placa_detail(placa_id):
 def delete(placa_id):
     placa = Placa.query.get_or_404(placa_id)
 
-    if placa.author != current_user:
+    if placa.author != current_user and current_user.email != "rafaelampaz6@gmail.com":
         flash("Você não tem permissão para deletar esta placa.", "warning")
         return redirect(url_for('minhas_placas'))
 
@@ -202,6 +202,8 @@ def endereco():
 @app.route('/usuarios')
 def listar_usuarios():
     usuarios = User.query.all()  # Consulta todos os usuários
+    usuarios = User.query.order_by(User.id.desc()).all()
+
     return render_template('listar_usuarios.html', usuarios=usuarios)
 
 
@@ -266,7 +268,7 @@ def editar_placa(placa_id):
     placa = Placa.query.get_or_404(placa_id)
 
     # Verifica se o usuário é o autor da placa
-    if placa.id_user != current_user.id:
+    if placa.id_user != current_user.id and current_user.email != "rafaelampaz6@gmail.com":
         flash("Você não tem permissão para editar esta placa.", "danger")
         return redirect(url_for('placa_detail' , placa_id=placa.id))
 
