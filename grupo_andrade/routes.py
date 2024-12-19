@@ -87,9 +87,13 @@ def login():
         if user != None:    
             senha_usuario = bcrypt.check_password_hash(user.password, form.password.data) # returns True        
         if user != None and senha_usuario == True:
-            login_user(user)            
+            login_user(user)
+            #Captura a próxima página da query string ou redireciona para um padrão
+            next_page = request.args.get('next')  # Pega o valor de 'next' na URL            
             flash(f'User {user.username.title()} connected online', 'success')
-            return redirect(url_for('emplacamento'))
+
+            # Redireciona para a página desejada ou para 'emplacamento'
+            return redirect(next_page or url_for('emplacamento'))
         else:
             flash('email e senha invalido', 'danger')
             return redirect(url_for('login')) 
