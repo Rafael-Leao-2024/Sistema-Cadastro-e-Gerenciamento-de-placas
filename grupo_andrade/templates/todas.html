@@ -52,7 +52,7 @@ content %}
         </div>
         <div class="flex flex-col space-y-1">
           <span
-            class="ml-2 text-lg {{ 'text-green-600' if placa.received else 'text-red-800' }}"
+            class="ml-2 text-lg {{ 'text-green-600' if placa.received else 'pendente' }}"
             ><p class="text-lg font-semibold text-gray-800">Status</p>
             {{ "Recebida" if placa.received else "Pendente" }}
           </span>
