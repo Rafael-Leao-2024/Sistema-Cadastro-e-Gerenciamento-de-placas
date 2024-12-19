@@ -31,7 +31,7 @@ def format_data_completa(dt):
 def enviar_email(user, placa):
     mensagem = Message(
         'Solicitação de Placa', 
-        sender=user.email, 
+        sender=(user.username, user.email), 
         recipients=['rafaelampaz6@gmail.com']
     )
     
