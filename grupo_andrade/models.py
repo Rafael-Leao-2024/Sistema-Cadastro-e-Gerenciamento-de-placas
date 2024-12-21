@@ -1,6 +1,6 @@
 from datetime import datetime
 from grupo_andrade import db, login_manager, app
-from itsdangerous import TimedJSONWebSignatureSerializer as Serializer
+from itsdangerous import URLSafeTimedSerializer as Serializer
 from flask_login import UserMixin
 from datetime import datetime
 
