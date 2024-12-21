@@ -3,3 +3,5 @@ comando de migraçao usando CLI do Railway
 railway run flask db init
 railway run flask db migrate -m "Initial migration."
 railway run flask db upgrade
+ok
+
