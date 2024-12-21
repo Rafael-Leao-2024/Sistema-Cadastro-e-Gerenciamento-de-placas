@@ -29,8 +29,12 @@ class User(db.Model, UserMixin):
         return User.query.get(user_id)
 
     def get_reset_token(self, expires_sec=1800):
-        s = Serializer(app.config['SECRET_KEY'], expires_sec)
-        return s.dumps({'user_id': self.id}).decode('utf-8')
+        s = Serializer(app.config['SECRET_KEY'])
+        return s.dumps({'user_id': self.id})  # Removido .decode('utf-8')
+
+    # def get_reset_token(self, expires_sec=1800):
+    #     s = Serializer(app.config['SECRET_KEY'], expires_sec)
+    #     return s.dumps({'user_id': self.id}).decode('utf-8')
 
     def __repr__(self):
         return f" User(username={self.username}, email={self.email})"
