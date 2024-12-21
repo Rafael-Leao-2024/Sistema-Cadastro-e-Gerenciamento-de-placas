@@ -30,7 +30,7 @@ class User(db.Model, UserMixin):
 
     def get_reset_token(self, expires_sec=1800):
         s = Serializer(app.config['SECRET_KEY'])
-        return s.dumps({'user_id': self.id})  # Removido .decode('utf-8')
+        return s.dumps({'user_id': str(self.id)})
 
     # def get_reset_token(self, expires_sec=1800):
     #     s = Serializer(app.config['SECRET_KEY'], expires_sec)

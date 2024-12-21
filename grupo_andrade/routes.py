@@ -295,9 +295,9 @@ def editar_placa(placa_id):
 def enviar_email_senha(user):
     token = user.get_reset_token()
     mensagem = Message('Password Reset Request', sender='noreply@demo.com', recipients=[user.email])
-    mensagem.body = f'''To reset your password, visit the following link:
+    mensagem.body = f'''Para redefinir sua senha, visite o seguinte link::
 {url_for('reset_token', token=token, _external=True)}
-If you did not make this request then simply ignore this email and no changes will be made.
+Se você não fez esta solicitação, simplesmente ignore este e-mail e nenhuma alteração será feita.
 obrigado {user.username}
 '''
     mail.send(mensagem)
@@ -330,7 +330,7 @@ def reset_token(token):
         hashed_password = bcrypt.generate_password_hash(form.password.data).decode('utf-8')
         user.password = hashed_password
         db.session.commit()
-        flash('Your password has been updated! You are now able to log in', 'success')
+        flash('Sua senha foi atualizada! Agora você pode fazer login', 'success')
         return redirect(url_for('login'))
     return render_template('reset_token.html', title='Reset Password', form=form)
     
