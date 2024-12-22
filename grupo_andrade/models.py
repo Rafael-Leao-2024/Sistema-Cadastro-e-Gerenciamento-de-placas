@@ -63,3 +63,17 @@ class Endereco(db.Model):
 
     def __repr__(self):
         return f"Endereco(endereco={self.endereco})"
+
+
+
+class Pagamento(db.Model):
+    __tablename__ = 'pagamento'  # Nome da tabela no banco de dados
+
+    id = db.Column(db.Integer, primary_key=True)  # ID do pagamento
+    id_pagamento = db.Column(db.String(255), unique=False, nullable=False)  # ID retornado pela API do Mercado Pago
+    status_pagamento = db.Column(db.String(50), nullable=False)  # Status do pagamento (ex: 'aprovado', 'recusado')
+    id_usuario = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)  # ID do usuário associado
+    date_pagamento = db.Column(db.DateTime, nullable=False, default=datetime.now)
+
+    def __repr__(self):
+        return f'<Pagamento {self.id} - {self.status_pagamento}>'

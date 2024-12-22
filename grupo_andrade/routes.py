@@ -1,9 +1,10 @@
 from flask import render_template, redirect, url_for, flash, request, abort
 from grupo_andrade.form import RegistrationForm, EmplacamentoForm, LoginForm, EnderecoForm, ResetPasswordForm, UpdateAccountForm, ConsultarForm, RequestResetForm
-from grupo_andrade.models import User, Placa, Endereco
+from grupo_andrade.models import User, Placa, Endereco, Pagamento
 from flask_login import login_required, current_user, login_user, logout_user
 from . import app, db, bcrypt
 from sqlalchemy import desc
+from sqlalchemy import extract
 from sqlalchemy.orm import joinedload
 from datetime import datetime, timedelta
 import secrets
@@ -12,6 +13,7 @@ from PIL import Image
 from grupo_andrade.utilidades import enviar_email
 from flask_mail import Message
 from grupo_andrade import mail
+import mercadopago
 
 
  
@@ -333,4 +335,85 @@ def reset_token(token):
         flash('Sua senha foi atualizada! Agora você pode fazer login', 'success')
         return redirect(url_for('login'))
     return render_template('reset_token.html', title='Reset Password', form=form)
+
+
+@app.route("/relatorio", methods=["GET", "POST"])
+@login_required
+def relatorio():
+    if request.method == "POST":
+        # Capturar o mês e o ano do formulário
+        mes = int(request.form.get("mes"))
+        ano = int(request.form.get("ano"))
+        
+        # Redirecionar para a rota de resultados com os parâmetros
+        return redirect(url_for("relatorio_resultados", mes=mes, ano=ano))
     
+    # Renderizar o formulário na primeira exibição
+    return render_template("relatorio_form.html")
+
+
+    
+
+@app.route("/relatorio/<int:mes>/<int:ano>")
+@login_required
+def relatorio_resultados(mes, ano):
+    # Filtrar placas do usuário logado pelo mês e ano
+    placas = Placa.query.filter(
+        Placa.id_user == current_user.id,
+        extract("month", Placa.date_create) == mes,
+        extract("year", Placa.date_create) == ano
+    ).all()
+    # Calcular quantidade e valor total
+    quantidade = len(placas)
+    valor_total = quantidade * 90
+
+    # Criar a preferência de pagamento no Mercado Pago
+    sdk = mercadopago.SDK("APP_USR-1492273460839410-121918-01988fad79b9683db6441c26574f6677-435616263")
+    preference_data = {
+        "items": [
+            {   "id": current_user.id,
+                "title": f"Pagamento de {quantidade} placas",
+                "quantity": 1,
+                "currency_id": "BRL",
+                "unit_price": valor_total,
+            }
+        ],
+        "back_urls": {
+            "success": url_for("resultado_pagamento", _external=True),
+            "failure": url_for("resultado_pagamento", _external=True),
+            "pending": url_for("homepage", _external=True),
+        },
+        "auto_return": "all",
+    }
+
+    preference_response = sdk.preference().create(preference_data)
+    try:
+        init_point = preference_response["response"]["init_point"]
+    except:
+        init_point = '/'
+    return render_template("relatorio_resultados.html", placas=placas, mes=mes, ano=ano, quantidade=quantidade,valor_total=valor_total,init_point=init_point)
+
+
+@app.route('/resultado_pagamento')
+@login_required
+def resultado_pagamento():
+    status_pagamento = request.args.get('status')
+    id_usuario = current_user.id  # Obter ID do usuário logado
+    id_pagamento = request.args.get('payment_id')  # Supondo que você tenha passado o mês na URL
+
+    # Criação do registro de pagamento no banco de dados
+    novo_pagamento = Pagamento(
+        id_pagamento=id_pagamento,  # Substitua pelo ID real retornado da API
+        status_pagamento=status_pagamento,
+        id_usuario=id_usuario        
+    )
+
+    db.session.add(novo_pagamento)
+    db.session.commit()
+    # try:
+    #     status = request.args.get('status')
+    # except:
+    #     status = None
+    print(status_pagamento)
+    return render_template('resultado_pagamento.html', status=status_pagamento)
+

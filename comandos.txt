@@ -2,6 +2,31 @@ comando de migraçao usando CLI do Railway
 
 railway run flask db init
 railway run flask db migrate -m "Initial migration."
-railway run flask db upgrade
+railway run 
 ok
+
+https://www.mercadopago.com.br/checkout/v1/payment/redirect/c9496014-d03d-43fc-b771-9d7f9ceae52c/congrats/rejected/
+?preference-id=435616263-64331560-d4d0-427d-9ade-b108a678f0eb&
+router-request-id=48b91a99-e7e0-4d02-b295-a4a95e791f28&
+p=262fe485ad527e6131d28390634ca33b
+
+resultado_pagamento?collection_id=97134398732&
+collection_status=rejected&
+payment_id=97134398732&
+tatus=rejected&
+external_reference=null&
+payment_type=credit_card&
+merchant_order_id=26437128216&
+preference_id=435616263-64331560-d4d0-427d-9ade-b108a678f0eb&
+site_id=MLB&processing_mode=aggregator&
+merchant_account_id=null HTTP/1.1" 200 -
+
+
+tabela de pagamento 
+com id 
+id pagamento
+status pagamento
+id usuario
+mes 
+valor pagamento
 

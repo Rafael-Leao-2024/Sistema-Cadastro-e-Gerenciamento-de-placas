@@ -1,0 +1,63 @@
+{% extends "base.html" %} {% block title %}Relatório - {{ mes }}/{{ ano }}{%
+endblock %} {% block content %}
+<div class="p-6 bg-white shadow rounded">
+  <h2 class="text-2xl font-bold mb-4">Relatório de {{ mes }}/{{ ano }}</h2>
+
+  <div class="grid grid-cols-5">
+    <p class="text-lg font-semibold">
+      Quantidade de Placas: <span class="text-blue-600">{{ quantidade }}</span>
+    </p>
+    <p class="text-lg font-semibold">
+      Valor Total: <span class="text-green-600">R$ {{ valor_total }}</span>
+    </p>
+    <a
+      href="{{ init_point }}"
+      class="mb-6 ml-4 bg-green-600 text-white px-6 py-3 rounded-lg shadow-md hover:bg-green-700 focus:outline-none"
+    >
+      Pagar Agora
+    </a>
+  </div>
+
+  {% if placas %}
+  <table class="min-w-full bg-white border border-gray-300 rounded">
+    <thead>
+      <tr class="bg-gray-200">
+        <th class="py-2 px-4 border">ID</th>
+        <th class="py-2 px-4 border">Placa</th>
+        <th class="py-2 px-4 border">Renavam</th>
+        <th class="py-2 px-4 border">Data de Criação</th>
+        <th class="py-2 px-4 border">Recebido</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for placa in placas %}
+      <tr>
+        <td class="py-2 px-4 border">{{ placa.id }}</td>
+        <td class="py-2 px-4 border">{{ placa.placa }}</td>
+        <td class="py-2 px-4 border">{{ placa.renavan }}</td>
+        <td class="py-2 px-4 border">
+          {{ placa.date_create.strftime("%d/%m/%Y") }}
+        </td>
+        <td class="py-2 px-4 border">
+          {% if placa.received %}
+          <span class="text-green-600">Recebido</span>
+          {% else %}
+          <span class="text-orange-600">Pendente de Recebimento</span>
+          {% endif %}
+        </td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+  {% else %}
+  <p class="ml-12 text-red-600">Nenhuma placa encontrada para este período.</p>
+  {% endif %}
+</div>
+<div class="grid grid-cols-8">
+  <a
+    href="{{ url_for('relatorio') }}"
+    class="mb-6 ml-4 bg-blue-600 text-white text-center px-6 py-3 rounded-lg shadow-md hover:bg-blue-900 focus:outline-none"
+    >Voltar</a
+  >
+</div>
+{% endblock %}

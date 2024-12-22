@@ -1,0 +1,40 @@
+{% extends "base.html" %} {% block title %}Relatório de Placas{% endblock %} {%
+block content %}
+<div
+  class="bg-white mt-6 mb-6 p-8 rounded-lg shadow-md w-full max-w-lg mx-auto"
+>
+  <h2 class="text-2xl font-bold mb-4">Relatório de Placas</h2>
+  <form method="POST" action="{{ url_for('relatorio') }}">
+    <div class="mb-4">
+      <label for="mes" class="block text-gray-700">Selecione o Mês:</label>
+      <select
+        id="mes"
+        name="mes"
+        class="block w-full p-2 border border-gray-300 rounded"
+      >
+        {% for i in range(1, 13) %}
+        <option value="{{ i }}">{{ i }}</option>
+        {% endfor %}
+      </select>
+    </div>
+    <div class="mb-4">
+      <label for="ano" class="block text-gray-700">Selecione o Ano:</label>
+      <select
+        id="ano"
+        name="ano"
+        class="block w-full p-2 border border-gray-300 rounded"
+      >
+        {% for ano in range(2024, 2031) %}
+        <option value="{{ ano }}">{{ ano }}</option>
+        {% endfor %}
+      </select>
+    </div>
+    <button
+      type="submit"
+      class="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600"
+    >
+      Gerar Relatório
+    </button>
+  </form>
+</div>
+{% endblock %}

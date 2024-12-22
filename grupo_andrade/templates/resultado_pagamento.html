@@ -1,0 +1,20 @@
+{% extends "base.html" %} {% block title %} Resultado do Pagamento {% endblock
+%} {% block content %}
+<div class="container mx-auto">
+  <h1 class="text-2xl font-bold my-4">Resultado do Pagamento</h1>
+
+  {% if status == 'approved' %}
+  <p class="text-green-500">Pagamento aprovado!</p>
+  <p>Obrigado pelo seu pagamento.</p>
+  {% else %}
+  <h2 class="text-red-700 mb-4">Pagamento recusado!</h2>
+  <p class="mb-4">Por favor, tente novamente.</p>
+  {% endif %}
+
+  <a
+    href="{{ url_for('relatorio') }}"
+    class="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600"
+    >Voltar ao Relatório de Placas</a
+  >
+</div>
+{% endblock %}
