@@ -410,10 +410,7 @@ def resultado_pagamento():
 
     db.session.add(novo_pagamento)
     db.session.commit()
-    # try:
-    #     status = request.args.get('status')
-    # except:
-    #     status = None
+    
     print(status_pagamento)
     return render_template('resultado_pagamento.html', status=status_pagamento)
 
