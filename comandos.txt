@@ -1,9 +1,12 @@
 comando de migraçao usando CLI do Railway
 
 railway run flask db init
-railway run flask db migrate -m "Initial migration."
-railway run 
-ok
+railway run flask db upgrade
+>>> from grupo_andrade import app, db
+railway run python
+
+>>> with app.app_context():
+...     db.create_all()
 
 https://www.mercadopago.com.br/checkout/v1/payment/redirect/c9496014-d03d-43fc-b771-9d7f9ceae52c/congrats/rejected/
 ?preference-id=435616263-64331560-d4d0-427d-9ade-b108a678f0eb&
