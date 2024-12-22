@@ -1,20 +1,26 @@
 {% extends "base.html" %} {% block title %} Resultado do Pagamento {% endblock
 %} {% block content %}
-<div class="container mx-auto">
-  <h1 class="text-2xl font-bold my-4">Resultado do Pagamento</h1>
+<div
+  class="mr-8 ml-8 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 flex items-center bg-gray-50 p-4 mb-4 rounded-lg shadow-sm"
+>
+  <h1 class="text-center mb-4 text-2xl font-bold my-4">
+    Resultado do Pagamento
+  </h1>
 
   {% if status == 'approved' %}
-  <p class="text-green-500">Pagamento aprovado!</p>
+  <p class="text-center text-2xl text-green-600 mb-4">Pagamento aprovado!</p>
   <p>Obrigado pelo seu pagamento.</p>
   {% else %}
-  <h2 class="text-red-700 mb-4">Pagamento recusado!</h2>
-  <p class="mb-4">Por favor, tente novamente.</p>
+  <h2 class="text-center text-2xl text-red-600 mb-4">Pagamento recusado!</h2>
+  <p class="text-center mb-4">Por favor, tente novamente.</p>
   {% endif %}
 
-  <a
-    href="{{ url_for('relatorio') }}"
-    class="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600"
-    >Voltar ao Relatório de Placas</a
-  >
+  <div class="text-center mt-4 mb-6">
+    <a
+      href="{{ url_for('relatorio') }}"
+      class="ml-2 mr-4 bg-blue-500 text-center text-white px-4 py-2 rounded hover:bg-blue-600"
+      >Voltar ao Relatório de Placas</a
+    >
+  </div>
 </div>
 {% endblock %}
