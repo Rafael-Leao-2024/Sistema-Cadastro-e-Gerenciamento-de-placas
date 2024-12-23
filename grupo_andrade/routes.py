@@ -365,7 +365,7 @@ def relatorio_resultados(mes, ano):
     ).all()
     # Calcular quantidade e valor total
     quantidade = len(placas)
-    valor_total = quantidade * 1
+    valor_total = quantidade * 0.01
 
     # Criar a preferência de pagamento no Mercado Pago
     sdk = mercadopago.SDK("APP_USR-1492273460839410-121918-01988fad79b9683db6441c26574f6677-435616263")
