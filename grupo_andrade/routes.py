@@ -365,7 +365,7 @@ def relatorio_resultados(mes, ano):
     ).all()
     # Calcular quantidade e valor total
     quantidade = len(placas)
-    valor_total = quantidade * 0.01
+    valor_total = quantidade * 35
 
     # Criar a preferência de pagamento no Mercado Pago
     sdk = mercadopago.SDK("APP_USR-1492273460839410-121918-01988fad79b9683db6441c26574f6677-435616263")
@@ -381,7 +381,7 @@ def relatorio_resultados(mes, ano):
         "back_urls": {
             "success": url_for("resultado_pagamento", _external=True),
             "failure": url_for("resultado_pagamento", _external=True),
-            "pending": url_for("homepage", _external=True),
+            "pending": url_for("resultado_pagamento", _external=True),
         },
         "auto_return": "all",
     }

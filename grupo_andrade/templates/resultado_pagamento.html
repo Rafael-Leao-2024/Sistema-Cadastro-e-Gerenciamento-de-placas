@@ -8,10 +8,13 @@
   </h1>
 
   {% if status == 'approved' %}
-  <p class="text-center text-2xl text-green-600 mb-4">Pagamento aprovado!</p>
+  <p class="text-center text-2xl text-green-600 mb-4">Pagamento Aprovado!</p>
   <p>Obrigado pelo seu pagamento.</p>
+  {% elif status == 'pending' %}
+  <h2 class="text-center text-2xl text-orange-600 mb-4">Pagamento Pendente!</h2>
+  <p class="text-center mb-4">Por favor, tente novamente.</p>
   {% else %}
-  <h2 class="text-center text-2xl text-red-600 mb-4">Pagamento recusado!</h2>
+  <h2 class="text-center text-2xl text-red-600 mb-4">Pagamento Recusado!</h2>
   <p class="text-center mb-4">Por favor, tente novamente.</p>
   {% endif %}
 

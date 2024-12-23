@@ -33,3 +33,6 @@ id usuario
 mes 
 valor pagamento
 
+https://www.mercadopago.com.br/checkout/v1/payment/redirect/d5f6a64f-6da9-44e7-aa39-e1e6f7997495/congrats/instructions/?preference-id=435616263-faacd234-c6ec-4706-a51f-f81fe8848d1f&router-request-id=f0b32b64-e6b5-4bdd-b132-15339ade0b82&p=262fe485ad527e6131d28390634ca33b#/
+
+http://127.0.0.1:5000/?collection_id=97323600490&collection_status=pending&payment_id=97323600490&status=pending&external_reference=null&payment_type=ticket&merchant_order_id=26494885305&preference_id=435616263-faacd234-c6ec-4706-a51f-f81fe8848d1f&site_id=MLB&processing_mode=aggregator&merchant_account_id=null
