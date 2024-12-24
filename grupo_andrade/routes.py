@@ -368,7 +368,8 @@ def relatorio_resultados(mes, ano):
     valor_total = quantidade * 2
 
     # Criar a preferência de pagamento no Mercado Pago
-    sdk = mercadopago.SDK("APP_USR-1492273460839410-121918-01988fad79b9683db6441c26574f6677-435616263")
+    API_MERCADO_PAGO = os.environ.get('API_MERCADO_PAGO')
+    sdk = mercadopago.SDK(API_MERCADO_PAGO)
     preference_data = {
         "items": [
             {   "id": current_user.id,
@@ -439,7 +440,8 @@ def novo_webhook():
         payment_id = data.get("data", {}).get("id")
 
         if payment_id:
-            sdk = mercadopago.SDK("APP_USR-1492273460839410-121918-01988fad79b9683db6441c26574f6677-435616263")
+            API_MERCADO_PAGO = os.environ.get("API_MERCADO_PAGO")
+            sdk = mercadopago.SDK(API_MERCADO_PAGO)
             payment_info = sdk.payment().get(payment_id)
 
             if payment_info["status"] == 200:
