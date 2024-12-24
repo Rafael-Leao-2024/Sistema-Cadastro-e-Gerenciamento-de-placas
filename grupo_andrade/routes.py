@@ -415,6 +415,7 @@ def resultado_pagamento():
     if pagamento:
         flash('Pagamento ja processando e aprovado', 'warning')
         return redirect(url_for('relatorio'))
+    
     novo_pagamento = Pagamento(
         id_pagamento=id_pagamento,  # Substitua pelo ID real retornado da API
         status_pagamento=status_pagamento,
