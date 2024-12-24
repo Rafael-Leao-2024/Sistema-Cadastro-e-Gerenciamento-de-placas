@@ -420,7 +420,7 @@ def resultado_pagamento():
     db.session.commit() 
 
     if novo_pagamento.status_pagamento == 'approved':
-        flash(f'Pagamento de {str(valor_pago):,.2f} realizado com sucesso', 'success')
+        flash(f'Pagamento de {valor_pago:,.2f} realizado com sucesso', 'success')
 
     return render_template('resultado_pagamento.html', status=status_pagamento)
 
