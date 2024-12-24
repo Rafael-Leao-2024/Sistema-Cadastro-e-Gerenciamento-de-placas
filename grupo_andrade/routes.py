@@ -385,7 +385,7 @@ def relatorio_resultados(mes, ano):
         },
 
         "auto_return": "all",
-        "notification_url": "https://web-production-7e591.up.railway.app/webhook",  # Adicione esta linha
+        "notification_url": "https://web-production-7e591.up.railway.app/novo_webhook",  # Adicione esta linha
     }
 
     preference_response = sdk.preference().create(preference_data)
@@ -417,10 +417,12 @@ def resultado_pagamento():
     print(status_pagamento)
     return render_template('resultado_pagamento.html', status=status_pagamento)
 
-@app.route("/webhook", methods=["POST"])
-def webhook():
+@app.route("/novo_webhook", methods=["POST"])
+def novo_webhook():
     # Receber notificação do Mercado Pago
     data = request.json
+    print(data)
+
     if data and "type" in data and data["type"] == "payment":
         payment_id = data.get("data", {}).get("id")
 
