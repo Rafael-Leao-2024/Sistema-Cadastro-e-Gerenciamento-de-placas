@@ -1,4 +1,4 @@
-from flask import render_template, redirect, url_for, flash, request, abort
+from flask import render_template, redirect, url_for, flash, request, abort, jsonify
 from grupo_andrade.form import RegistrationForm, EmplacamentoForm, LoginForm, EnderecoForm, ResetPasswordForm, UpdateAccountForm, ConsultarForm, RequestResetForm
 from grupo_andrade.models import User, Placa, Endereco, Pagamento
 from flask_login import login_required, current_user, login_user, logout_user
@@ -383,10 +383,13 @@ def relatorio_resultados(mes, ano):
             "failure": url_for("resultado_pagamento", _external=True),
             "pending": url_for("resultado_pagamento", _external=True),
         },
+
         "auto_return": "all",
+        "notification_url": url_for("webhook", _external=True),  # Adicione esta linha
     }
 
     preference_response = sdk.preference().create(preference_data)
+    print(preference_response)
     try:
         init_point = preference_response["response"]["init_point"]
     except:
@@ -414,3 +417,35 @@ def resultado_pagamento():
     print(status_pagamento)
     return render_template('resultado_pagamento.html', status=status_pagamento)
 
+@app.route("/webhook", methods=["POST"])
+def webhook():
+    # Receber notificação do Mercado Pago
+    data = request.json
+    if data and "type" in data and data["type"] == "payment":
+        payment_id = data.get("data", {}).get("id")
+
+        if payment_id:
+            sdk = mercadopago.SDK("APP_USR-1492273460839410-121918-01988fad79b9683db6441c26574f6677-435616263")
+            payment_info = sdk.payment().get(payment_id)
+
+            if payment_info["status"] == 200:
+                payment_status = payment_info["response"]["status"]
+                payment_id = payment_info["response"]["id"]
+                user_id = payment_info["response"]["payer"]["id"]  # Exemplo: obtenha o ID do pagador
+
+                # Atualize o banco de dados com o status do pagamento
+                pagamento = Pagamento.query.filter_by(id_pagamento=payment_id).first()
+                if pagamento:
+                    pagamento.status_pagamento = payment_status
+                else:
+                    # Se não existir, crie um novo registro
+                    novo_pagamento = Pagamento(
+                        id_pagamento=payment_id,
+                        status_pagamento=payment_status,
+                        id_usuario=user_id
+                    )
+                    db.session.add(novo_pagamento)
+
+                db.session.commit()
+
+    return jsonify({"status": "success"}), 200
