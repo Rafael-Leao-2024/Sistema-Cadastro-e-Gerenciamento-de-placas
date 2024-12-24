@@ -58,6 +58,7 @@ Equipe de Atendimento
 
 
 def pegar_status(payment_id):
+    
     url = f"https://api.mercadopago.com/v1/payments/{payment_id}"
 
     # Defina o cabeçalho de autorização com seu access token
@@ -78,4 +79,5 @@ def pegar_status(payment_id):
         payment_info = response.json() 
         status_pagamento = payment_info.get('status')
         id_pagamento = payment_id
+        valor_pago = None
     return valor_pago, id_pagamento, status_pagamento
