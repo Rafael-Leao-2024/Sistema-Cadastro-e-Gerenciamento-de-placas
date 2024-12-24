@@ -385,7 +385,7 @@ def relatorio_resultados(mes, ano):
         },
 
         "auto_return": "all",
-        # Adicione esta linha
+        "notification_url": "https://web-production-7e591.up.railway.app/novo_webhook",  # Adicione esta linha
     }
 
     preference_response = sdk.preference().create(preference_data)
