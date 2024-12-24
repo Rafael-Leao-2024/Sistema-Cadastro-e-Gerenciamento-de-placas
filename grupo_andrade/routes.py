@@ -10,7 +10,7 @@ from datetime import datetime, timedelta
 import secrets
 import os
 from PIL import Image
-from grupo_andrade.utilidades import enviar_email
+from grupo_andrade.utilidades import enviar_email, pegar_status
 from flask_mail import Message
 from grupo_andrade import mail
 import mercadopago
@@ -404,6 +404,7 @@ def resultado_pagamento():
     id_usuario = current_user.id  # Obter ID do usuário logado
     id_pagamento = request.args.get('payment_id')  # Supondo que você tenha passado o mês na URL
 
+    id_pagamento, status_pagamento = pegar_status(id_pagamento)
     # Criação do registro de pagamento no banco de dados
     novo_pagamento = Pagamento(
         id_pagamento=id_pagamento,  # Substitua pelo ID real retornado da API

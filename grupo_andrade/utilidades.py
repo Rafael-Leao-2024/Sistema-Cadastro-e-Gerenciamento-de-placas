@@ -3,6 +3,7 @@ from grupo_andrade import mail
 from flask_mail import Message
 from flask import url_for, render_template
 import pytz
+import requests
 
 def format_data(dt):
     """Converte a data para o horário local e formata para exibição."""
@@ -53,3 +54,27 @@ Atenciosamente {user.username.lower()},
 Equipe de Atendimento
 '''   
     mail.send(mensagem)
+
+
+
+def pegar_status(payment_id):
+    url = f"https://api.mercadopago.com/v1/payments/{payment_id}"
+
+    # Defina o cabeçalho de autorização com seu access token
+    headers = {
+        "Authorization": "Bearer APP_USR-1492273460839410-121918-01988fad79b9683db6441c26574f6677-435616263"  # Substitua pelo seu access token
+    }
+
+    # Faça a requisição GET
+    response = requests.get(url, headers=headers)
+
+    # Verifique se a requisição foi bem-sucedida
+    if response.status_code == 200 and response.json().get('status') == 'approved':
+        payment_info = response.json()  # Converte a resposta para JSON
+        status_pagamento = payment_info['status']
+        id_pagamento = payment_info['point_of_interaction']['transaction_data']['transaction_id']
+    else:
+        payment_info = response.json() 
+        status_pagamento = payment_info.get('status')
+        id_pagamento = payment_id
+    return id_pagamento, status_pagamento
