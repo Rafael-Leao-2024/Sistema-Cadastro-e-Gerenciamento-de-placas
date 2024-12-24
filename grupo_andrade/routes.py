@@ -389,7 +389,7 @@ def relatorio_resultados(mes, ano):
     }
 
     preference_response = sdk.preference().create(preference_data)
-    print(preference_response)
+    
     try:
         init_point = preference_response["response"]["init_point"]
     except:
@@ -404,18 +404,24 @@ def resultado_pagamento():
     id_usuario = current_user.id  # Obter ID do usuário logado
     id_pagamento = request.args.get('payment_id')  # Supondo que você tenha passado o mês na URL
 
-    id_pagamento, status_pagamento = pegar_status(id_pagamento)
+    # url de desisitencia de pagamento id é NULL 
+    if  id_pagamento == 'null':
+        flash('Voce desistiu do pagamento caso queira falar com suporte chame no zap', 'warning')
+        return redirect(url_for('relatorio'))        
+
+    valor_pago, id_pagamento, status_pagamento = pegar_status(id_pagamento)
     # Criação do registro de pagamento no banco de dados
     novo_pagamento = Pagamento(
         id_pagamento=id_pagamento,  # Substitua pelo ID real retornado da API
         status_pagamento=status_pagamento,
         id_usuario=id_usuario        
     )
-
     db.session.add(novo_pagamento)
-    db.session.commit()
-    
-    print(status_pagamento)
+    db.session.commit() 
+
+    if novo_pagamento.status_pagamento == 'approved':
+        flash(f'Pagamento de {str(valor_pago):,.2f} realizado com sucesso', 'success')
+
     return render_template('resultado_pagamento.html', status=status_pagamento)
 
 @app.route("/novo_webhook", methods=["POST"])

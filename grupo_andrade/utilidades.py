@@ -73,8 +73,9 @@ def pegar_status(payment_id):
         payment_info = response.json()  # Converte a resposta para JSON
         status_pagamento = payment_info['status']
         id_pagamento = payment_info['point_of_interaction']['transaction_data']['transaction_id']
+        valor_pago = payment_info.get('transaction_amount')
     else:
         payment_info = response.json() 
         status_pagamento = payment_info.get('status')
         id_pagamento = payment_id
-    return id_pagamento, status_pagamento
+    return valor_pago, id_pagamento, status_pagamento
