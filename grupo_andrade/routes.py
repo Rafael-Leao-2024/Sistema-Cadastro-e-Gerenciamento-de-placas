@@ -420,17 +420,7 @@ def resultado_pagamento():
 @app.route("/webhook", methods=["POST"])
 def webhook():
     # Receber notificação do Mercado Pago
-    data = {
-    "type": "payment",
-    "data": {
-        "id": "123456789",
-        "status": "approved",
-        "payer": {
-            "id": "payer_id_example"
-        }
-    }
-}
-
+    data = request.json
     if data and "type" in data and data["type"] == "payment":
         payment_id = data.get("data", {}).get("id")
 
