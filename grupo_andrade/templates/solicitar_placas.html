@@ -107,9 +107,15 @@ content %}
   document.getElementById('add-placa').addEventListener('click', function () {
     const newPlacaItem = document.querySelector('.placa-item').cloneNode(true);
 
-    // Limpar os valores dos inputs no novo bloco
+    // Manter o valor padrão apenas no campo `endereco_placa`
     newPlacaItem.querySelectorAll('input').forEach((input) => {
-      input.value = ''; // Limpa o valor
+      if (input.name === 'endereco_placa') {
+        // Mantém o valor padrão do campo endereco_placa
+        input.value = input.getAttribute('value');
+      } else {
+        // Limpa os valores de outros campos
+        input.value = '';
+      }
     });
 
     // Atualizar o título do novo bloco
