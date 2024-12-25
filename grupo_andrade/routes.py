@@ -497,10 +497,12 @@ def solicitar_placas():
         db.session.commit()
         # Enviar e-mail
         user = current_user  # Obtenha o usuário atual
-        print(lista_placas)
-        enviar_email(user, lista_placas)
+        if len(lista_placas) > 0:
+            enviar_email(user, lista_placas)           
 
-        flash('Placas solicitadas com sucesso e e-mail enviado!', 'success')
-        return redirect(url_for('minhas_placas'))
-    
+            flash('Placas solicitadas com sucesso e e-mail enviado!', 'success')
+            return redirect(url_for('minhas_placas'))
+        else:
+            flash('Voce não preencheu os campos com os dados!', 'info')
+            return redirect(url_for('solicitar_placas'))        
     return render_template('solicitar_placas.html', titulo='solicitar varias placas', endereco=endereco)
