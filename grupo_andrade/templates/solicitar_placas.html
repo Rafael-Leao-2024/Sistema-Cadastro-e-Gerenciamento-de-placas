@@ -1,4 +1,4 @@
-{% extends 'base.html' %} {% block title %}{{ titulo }}{% endblock %} {% block
+{% extends 'base.html' %} grupo_andrade/templates/minhas_placas.html {% block
 content %}
 <div
   class="bg-white mt-6 mb-6 p-8 rounded-lg shadow-md w-full max-w-3xl mx-auto"
@@ -10,8 +10,16 @@ content %}
     <div id="placa-container">
       <!-- Primeiro bloco de formulário -->
       <div
-        class="placa-item mb-6 p-4 border-2 border-gray-200 rounded-lg shadow-sm"
+        class="placa-item mb-6 p-4 border-2 border-gray-200 rounded-lg shadow-sm relative"
       >
+        <!-- Botão para excluir o bloco -->
+        <button
+          type="button"
+          class="remove-placa absolute top-2 right-2 bg-red-400 text-white font-bold rounded-full px-2 py-1 hover:bg-red-600"
+        >
+          X
+        </button>
+
         <h3 class="text-xl font-semibold text-blue-600 mb-4">Placa 1</h3>
         <!-- Endereço da Placa -->
         <div class="mb-4">
@@ -95,8 +103,8 @@ content %}
     countDisplay.textContent = totalPlacas;
   }
 
+  // Função para adicionar um novo bloco de formulário
   document.getElementById('add-placa').addEventListener('click', function () {
-    // Clonar o bloco de formulário
     const newPlacaItem = document.querySelector('.placa-item').cloneNode(true);
 
     // Limpar os valores dos inputs no novo bloco
@@ -104,16 +112,29 @@ content %}
       input.value = ''; // Limpa o valor
     });
 
-    // Atualizar o título do bloco
+    // Atualizar o título do novo bloco
     const totalPlacas = container.querySelectorAll('.placa-item').length + 1;
     newPlacaItem.querySelector('h3').textContent = `Placa ${totalPlacas}`;
 
+    // Adicionar o botão de exclusão ao novo bloco
+    const removeButton = newPlacaItem.querySelector('.remove-placa');
+    removeButton.addEventListener('click', function () {
+      newPlacaItem.remove();
+      updatePlacaCount();
+    });
+
     // Adicionar o novo bloco ao container
     container.appendChild(newPlacaItem);
-
-    // Atualizar a contagem de placas
     updatePlacaCount();
   });
+
+  // Adicionar funcionalidade de remoção ao primeiro bloco
+  document
+    .querySelector('.placa-item .remove-placa')
+    .addEventListener('click', function () {
+      document.querySelector('.placa-item').remove();
+      updatePlacaCount();
+    });
 
   // Atualiza a contagem inicialmente (se houver blocos extras)
   updatePlacaCount();
