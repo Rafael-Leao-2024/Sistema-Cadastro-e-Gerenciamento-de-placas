@@ -99,7 +99,7 @@ def login():
             flash(f'User {user.username.title()} connected online', 'success')
 
             # Redireciona para a página desejada ou para 'emplacamento'
-            return redirect(next_page or url_for('emplacamento'))
+            return redirect(next_page or url_for('solicitar_placas'))
         else:
             flash('email e senha invalido', 'danger')
             return redirect(url_for('login')) 
