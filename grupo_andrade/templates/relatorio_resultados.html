@@ -49,7 +49,9 @@ endblock %} {% block content %}
             {% if placa.received %}
             <span class="text-green-600">Recebido</span>
             {% else %}
-            <span class="text-orange-600">Pendente</span>
+            <a href="{{ url_for('placa_detail', placa_id=placa.id) }}">
+              <span class="text-orange-600">Pendente</span>
+            </a>
             {% endif %}
           </td>
         </tr>

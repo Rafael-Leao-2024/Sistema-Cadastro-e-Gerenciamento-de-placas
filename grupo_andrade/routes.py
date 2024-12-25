@@ -22,27 +22,27 @@ import mercadopago
 def homepage():
     return render_template('homepage.html', titulo='homepage')
 
-@app.route("/emplacar", methods=["GET", "POST"])
-@login_required
-def emplacamento():
-    form = EmplacamentoForm()
-    if request.method == 'GET':
-        endereco = Endereco.query.filter_by(id_user=current_user.id).order_by(Endereco.id.desc()).first()
-        try:
-            form.endereco_placa.data = endereco.endereco.title()
-        except:
-            form.endereco_placa.data = Endereco.endereco.default.arg
-    if form.validate_on_submit():
-        # Lógica para processar os dados do formulário
-        placa = Placa(placa=form.placa.data.upper(), crlv=form.crlv.data, renavan=form.renavam.data, endereco_placa=form.endereco_placa.data, id_user=current_user.id)
-        db.session.add(placa)
-        db.session.commit()
-        #placa = Placa.query.filter_by(placa=form.placa.data).first()
-        enviar_email(current_user, placa=placa)
-        flash(f'Placa {placa.placa.upper()} solicitada com Success!', 'success')
-        # Exemplo: salvar no banco de dados ou fazer algo com os dados
-        return redirect(url_for('minhas_placas'))
-    return render_template('emplacar.html', form=form, titulo='emplacar')
+# @app.route("/emplacar", methods=["GET", "POST"])
+# @login_required
+# def emplacamento():
+#     form = EmplacamentoForm()
+#     if request.method == 'GET':
+#         endereco = Endereco.query.filter_by(id_user=current_user.id).order_by(Endereco.id.desc()).first()
+#         try:
+#             form.endereco_placa.data = endereco.endereco.title()
+#         except:
+#             form.endereco_placa.data = Endereco.endereco.default.arg
+#     if form.validate_on_submit():
+#         # Lógica para processar os dados do formulário
+#         placa = Placa(placa=form.placa.data.upper(), crlv=form.crlv.data, renavan=form.renavam.data, endereco_placa=form.endereco_placa.data, id_user=current_user.id)
+#         db.session.add(placa)
+#         db.session.commit()
+#         #placa = Placa.query.filter_by(placa=form.placa.data).first()
+#         enviar_email(current_user, placa=placa)
+#         flash(f'Placa {placa.placa.upper()} solicitada com Success!', 'success')
+#         # Exemplo: salvar no banco de dados ou fazer algo com os dados
+#         return redirect(url_for('minhas_placas'))
+#     return render_template('emplacar.html', form=form, titulo='emplacar')
 
 @app.route("/logout")
 def logout():
@@ -365,7 +365,8 @@ def relatorio_resultados(mes, ano):
     ).all()
     # Calcular quantidade e valor total
     quantidade = len(placas)
-    valor_total = quantidade * 2
+    valor_total = quantidade * 100
+    valor_total_str = f'{valor_total:,.2f}'
 
     # Criar a preferência de pagamento no Mercado Pago
     API_MERCADO_PAGO = os.environ.get('API_MERCADO_PAGO')
@@ -395,7 +396,7 @@ def relatorio_resultados(mes, ano):
         init_point = preference_response["response"]["init_point"]
     except:
         init_point = '/'
-    return render_template("relatorio_resultados.html", placas=placas, mes=mes, ano=ano, quantidade=quantidade,valor_total=valor_total,init_point=init_point)
+    return render_template("relatorio_resultados.html", placas=placas, mes=mes, ano=ano, quantidade=quantidade,valor_total=valor_total_str,init_point=init_point)
 
 
 @app.route('/resultado_pagamento')
