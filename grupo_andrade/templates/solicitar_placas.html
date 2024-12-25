@@ -1,0 +1,121 @@
+{% extends 'base.html' %} {% block title %}{{ titulo }}{% endblock %} {% block
+content %}
+<div
+  class="bg-white mt-6 mb-6 p-8 rounded-lg shadow-md w-full max-w-3xl mx-auto"
+>
+  <h2 class="text-2xl font-bold text-center text-green-700 mb-6">
+    Solicitar Placas de Veículos
+  </h2>
+  <form method="POST">
+    <div id="placa-container">
+      <!-- Primeiro bloco de formulário -->
+      <div
+        class="placa-item mb-6 p-4 border-2 border-gray-200 rounded-lg shadow-sm"
+      >
+        <h3 class="text-xl font-semibold text-blue-600 mb-4">Placa 1</h3>
+        <!-- Endereço da Placa -->
+        <div class="mb-4">
+          <label for="endereco_placa" class="block text-gray-700"
+            >Endereço da Placa</label
+          >
+          <input
+            value="{{ endereco }}"
+            type="text"
+            name="endereco_placa"
+            class="text-green-700 w-full px-4 py-2 border rounded-lg focus:outline-none focus:border-green-600"
+            required
+          />
+        </div>
+
+        <!-- CRLV -->
+        <div class="mb-4">
+          <label for="crlv" class="block text-gray-700">CRLV</label>
+          <input
+            type="text"
+            name="crlv"
+            class="w-full px-4 py-2 border rounded-lg focus:outline-none focus:border-green-600"
+            required
+          />
+        </div>
+
+        <!-- Renavam -->
+        <div class="mb-4">
+          <label for="renavam" class="block text-gray-700">Renavam</label>
+          <input
+            type="text"
+            name="renavam"
+            class="w-full px-4 py-2 border rounded-lg focus:outline-none focus:border-green-600"
+            required
+          />
+        </div>
+
+        <!-- Placa -->
+        <div class="mb-4">
+          <label for="placa" class="block text-gray-700">Placa</label>
+          <input
+            type="text"
+            name="placa"
+            class="w-full px-4 py-2 border rounded-lg focus:outline-none focus:border-green-600 uppercase"
+            maxlength="7"
+            required
+          />
+        </div>
+      </div>
+    </div>
+
+    <!-- Botão para adicionar mais blocos -->
+    <button
+      type="button"
+      id="add-placa"
+      class="bg-blue-400 text-white font-bold py-2 px-4 rounded-md hover:bg-blue-600"
+    >
+      Adicionar outra placa
+    </button>
+
+    <p class="mt-4 text-gray-600 font-medium">
+      Quantidade de Placas: <span id="placa-count">1</span>
+    </p>
+
+    <!-- Botão de envio -->
+    <button
+      type="submit"
+      class="w-full bg-green-400 text-white font-bold py-2 px-4 rounded-md hover:bg-green-600 mt-6"
+    >
+      Solicitar Placas
+    </button>
+  </form>
+</div>
+
+<script>
+  const container = document.getElementById('placa-container');
+  const countDisplay = document.getElementById('placa-count');
+
+  function updatePlacaCount() {
+    const totalPlacas = container.querySelectorAll('.placa-item').length;
+    countDisplay.textContent = totalPlacas;
+  }
+
+  document.getElementById('add-placa').addEventListener('click', function () {
+    // Clonar o bloco de formulário
+    const newPlacaItem = document.querySelector('.placa-item').cloneNode(true);
+
+    // Limpar os valores dos inputs no novo bloco
+    newPlacaItem.querySelectorAll('input').forEach((input) => {
+      input.value = ''; // Limpa o valor
+    });
+
+    // Atualizar o título do bloco
+    const totalPlacas = container.querySelectorAll('.placa-item').length + 1;
+    newPlacaItem.querySelector('h3').textContent = `Placa ${totalPlacas}`;
+
+    // Adicionar o novo bloco ao container
+    container.appendChild(newPlacaItem);
+
+    // Atualizar a contagem de placas
+    updatePlacaCount();
+  });
+
+  // Atualiza a contagem inicialmente (se houver blocos extras)
+  updatePlacaCount();
+</script>
+{% endblock %}

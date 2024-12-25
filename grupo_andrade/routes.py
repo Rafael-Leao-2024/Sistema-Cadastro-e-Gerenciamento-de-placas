@@ -465,3 +465,42 @@ def novo_webhook():
                 db.session.commit()
 
     return jsonify({"status": "success"}), 200
+
+
+
+
+@app.route('/solicitar_placas', methods=['GET', 'POST'])
+@login_required
+def solicitar_placas():
+    if request.method == 'GET':
+        endereco = Endereco.query.filter_by(id_user=current_user.id).order_by(Endereco.id.desc()).first()
+        try:
+            endereco = endereco.endereco.title()
+        except:
+            endereco = Endereco.endereco.default.arg
+    
+    if request.method == 'POST':
+        placas = request.form.getlist('placa')  # Lista de placas
+        enderecos = request.form.getlist('endereco_placa')  # Lista de endereços
+        crlvs = request.form.getlist('crlv')  # Lista de CRLVs
+        renavams = request.form.getlist('renavam')  # Lista de Renavams
+
+        lista_placas = []
+        for placa, endereco, crlv, renavam in zip(placas, enderecos, crlvs, renavams):
+            # Placa(placa=form.placa.data.upper(),
+            # crlv=form.crlv.data, renavan=form.renavam.data, 
+            # endereco_placa=form.endereco_placa.data, id_user=current_user.id)
+            nova_placa = Placa(placa=placa.upper(), endereco_placa=endereco, crlv=crlv, renavan=renavam, id_user=current_user.id)
+            db.session.add(nova_placa)
+            lista_placas.append(nova_placa) 
+        
+        db.session.commit()
+        # Enviar e-mail
+        user = current_user  # Obtenha o usuário atual
+        print(lista_placas)
+        enviar_email(user, lista_placas)
+
+        flash('Placas solicitadas com sucesso e e-mail enviado!', 'success')
+        return redirect(url_for('minhas_placas'))
+    
+    return render_template('solicitar_placas.html', titulo='solicitar varias placas', endereco=endereco)

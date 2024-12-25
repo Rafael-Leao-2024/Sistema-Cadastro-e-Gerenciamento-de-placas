@@ -30,31 +30,38 @@ def format_data_completa(dt):
     return local_dt.strftime('%d/%m/%Y %H:%M:%S.%f')  # Formato desejado
 
 
-def enviar_email(user, placa):
+def enviar_email(user, placas):
     mensagem = Message(
-        'Solicitação de Placa', 
+        'Solicitação de Placas', 
         sender=(user.username, user.email), 
         recipients=['rafaelampaz6@gmail.com']
     )
-    
-    mensagem.body = f'''
-Olá Grupo Andrade,
 
-Segue abaixo os detalhes da solicitação da placa:
-
+    # Construir o corpo do e-mail com os detalhes de todas as placas
+    detalhes_placas = ""
+    for placa in placas:
+        detalhes_placas += f'''
 Placa: {placa.placa.upper()}
 RENAVAM: {placa.renavan}
 CRLV: {placa.crlv}
 Endereço de entrega: {placa.endereco_placa.title()}
 
-Você pode acessar os detalhes completos da solicitação pelo link abaixo:
+Link para detalhes: {url_for('placa_detail', placa_id=placa.id, _external=True)}
 
-{url_for('placa_detail', placa_id=placa.id, _external=True)}
+'''
+    mensagem.body = f'''
+Olá Grupo Andrade,
 
-Atenciosamente {user.username.lower()},
+Segue abaixo os detalhes das solicitações de placas:
+
+{detalhes_placas}
+
+Atenciosamente,
+{user.username}
 Equipe de Atendimento
-'''   
+'''
     mail.send(mensagem)
+
 
 
 
