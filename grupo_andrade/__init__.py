@@ -53,8 +53,8 @@ login_manager.login_message_category = 'info'
 app.config['MAIL_SERVER'] = 'smtp.googlemail.com'
 app.config['MAIL_PORT'] = 587
 app.config['MAIL_USE_TLS'] = True
-app.config['MAIL_USERNAME'] = 'rafaelampaz6@gmail.com'
-app.config['MAIL_PASSWORD'] =  'khdwyucxztubcsgw'
+app.config['MAIL_USERNAME'] = os.environ.get('MAIL_USERNAME')
+app.config['MAIL_PASSWORD'] =  os.environ.get('MAIL_PASSWORD')
 
 mail = Mail(app)
 
@@ -66,5 +66,8 @@ app.jinja_env.filters['format_data_completa'] = format_data_completa
 
 from . import routes
 
-print('banco onlina desligado no local')
-print(os.getenv('DATABASE_URL'))
+if  os.getenv('DATABASE_URL'):
+    print('banco onlina ligado')
+    print(os.getenv('DATABASE_URL'))
+else:
+    print('Banco local')
