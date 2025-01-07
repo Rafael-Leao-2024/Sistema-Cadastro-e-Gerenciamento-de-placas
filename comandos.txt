@@ -48,3 +48,8 @@ preference_id=435616263-cba731ba-c9e4-44a7-86e3-ecadd1074934&
 site_id=MLB&
 processing_mode=aggregator&
 merchant_account_id=null
+
+#current_app em todas files
+def create_app()
+Config em config.py em com variaveies de ambiente
+pacotes para cada __init__.py  

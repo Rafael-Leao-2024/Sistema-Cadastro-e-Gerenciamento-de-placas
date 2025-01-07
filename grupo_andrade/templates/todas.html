@@ -18,10 +18,10 @@ content %}
     {% for placa in placas %}
     <a href="{{ url_for('placa_detail', placa_id=placa.id) }}">
       <div
-        class="ml-20 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 flex items-center bg-gray-50 p-4 mb-4 rounded-lg shadow-sm"
+        class="ml-5 p-6 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 flex items-center bg-gray-100 p-4 mb-4 rounded-lg shadow-sm"
       >
         <div
-          class="flex-shrink-0 w-20 h-20 bg-gray-200 rounded-lg flex items-center justify-center mr-4"
+          class="ml-10 p-6 flex-shrink-0 w-20 h-20 bg-gray-200 rounded-lg flex items-center justify-center mr-4"
         >
           <!-- Exibição da Placa no estilo Mercosul -->
           <div class="inline-block">
