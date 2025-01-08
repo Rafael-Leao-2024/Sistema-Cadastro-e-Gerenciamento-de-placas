@@ -91,3 +91,13 @@ def pegar_status(payment_id):
         id_pagamento = payment_id
         valor_pago = None
     return valor_pago, id_pagamento, status_pagamento
+
+
+# em desemvolvimento para pull validaçao de email
+
+def verificar_email(email):
+    CHAVE_API_DE_EMAIL = os.environ.get('CHAVE_API_DE_EMAIL')
+    url = f"https://api.hunter.io/v2/email-verifier?email={email}&api_key={CHAVE_API_DE_EMAIL}"    
+    response = requests.get(url)
+    dados = response.json()
+    return dados.get('data', {}).get('status') == 'valid' or dados.get('data', {}).get('status') == 'accept_all'

@@ -10,7 +10,7 @@ from datetime import datetime, timedelta
 import secrets
 import os
 from PIL import Image
-from grupo_andrade.utilidades import enviar_email, pegar_status
+from grupo_andrade.utilidades import enviar_email, pegar_status, verificar_email
 from flask_mail import Message
 from grupo_andrade import mail
 import mercadopago
@@ -113,7 +113,11 @@ def register():
         flash(f'{current_user.username} Voce ja esta logado e resgristrado pode postar', 'info')
         return redirect(url_for('postagem'))
     if form.validate_on_submit():
-        user = User.query.filter_by(email= form.email.data).first()
+        if verificar_email(form.email.data):
+            user = User.query.filter_by(email= form.email.data).first()
+        else:
+            flash(f'Este email nao é permitido use email valido!', 'info')
+            return redirect(url_for('register')) 
         if user is None:
             senha_criptografada = bcrypt.generate_password_hash(form.password.data).decode('utf-8')
             user = User(username=form.username.data, email=form.email.data, password=senha_criptografada)
@@ -211,11 +215,9 @@ def endereco():
 
 @app.route('/usuarios')
 def listar_usuarios():
-    usuarios = User.query.all()  # Consulta todos os usuários
+    # usuarios = User.query.all()  # Consulta todos os usuários
     usuarios = User.query.order_by(User.id.desc()).all()
-
     return render_template('listar_usuarios.html', usuarios=usuarios)
-
 
 
 def save_picture(form_picture):
