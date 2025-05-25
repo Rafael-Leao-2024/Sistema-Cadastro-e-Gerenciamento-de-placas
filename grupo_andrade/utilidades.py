@@ -1,7 +1,6 @@
-from datetime import datetime
 from grupo_andrade import mail
 from flask_mail import Message
-from flask import url_for, render_template
+from flask import url_for
 import pytz
 import requests
 import os
@@ -79,6 +78,8 @@ def pegar_status(payment_id):
     # Faça a requisição GET
     response = requests.get(url, headers=headers)
 
+    valor_pago = None
+
     # Verifique se a requisição foi bem-sucedida
     if response.status_code == 200 and response.json().get('status') == 'approved':
         payment_info = response.json()  # Converte a resposta para JSON
@@ -88,8 +89,7 @@ def pegar_status(payment_id):
     else:
         payment_info = response.json() 
         status_pagamento = payment_info.get('status')
-        id_pagamento = payment_id
-        valor_pago = None
+        id_pagamento = payment_id        
     return valor_pago, id_pagamento, status_pagamento
 
 
@@ -101,3 +101,7 @@ def verificar_email(email):
     response = requests.get(url)
     dados = response.json()
     return dados.get('data', {}).get('status') == 'valid' or dados.get('data', {}).get('status') == 'accept_all'
+
+
+
+# print(verificar_email('rafaelampaz@hotmail.com'))

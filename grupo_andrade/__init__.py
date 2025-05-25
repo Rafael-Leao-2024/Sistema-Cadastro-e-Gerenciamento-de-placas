@@ -71,3 +71,4 @@ if  os.getenv('DATABASE_URL'):
     print(os.getenv('DATABASE_URL'))
 else:
     print('Banco local')
+    print(app.config['SQLALCHEMY_DATABASE_URI'])
