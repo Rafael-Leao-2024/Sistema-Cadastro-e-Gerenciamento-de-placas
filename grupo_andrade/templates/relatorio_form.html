@@ -13,7 +13,7 @@ block content %}
         class="block w-full p-2 border border-gray-300 rounded"
       >
         {% for i in range(1, 13) %}
-        <option value="{{ i }}" {% if i == 12 %}selected{% endif %}>{{ i }}</option>
+        <option value="{{ i }}" {% if i == 5 %}selected{% endif %}>{{ i }}</option>
         {% endfor %}
       </select>
     </div>
@@ -24,7 +24,7 @@ block content %}
         name="ano"
         class="block w-full p-2 border border-gray-300 rounded"
       >
-        {% for ano in range(2024, 2031) %}
+        {% for ano in range(2025, 2031) %}
         <option value="{{ ano }}">{{ ano }}</option>
         {% endfor %}
       </select>

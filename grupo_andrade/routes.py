@@ -14,8 +14,9 @@ from grupo_andrade.utilidades import enviar_email, pegar_status, verificar_email
 from flask_mail import Message
 from grupo_andrade import mail
 import mercadopago
+from dotenv import load_dotenv
 
-
+load_dotenv()
  
 
 @app.route("/")
@@ -205,7 +206,6 @@ def endereco():
         return redirect(url_for('endereco'))  # Redireciona para a página inicial ou onde preferir
     elif request.method == 'GET':
         endereco = Endereco.query.filter_by(id_user=current_user.id).order_by(Endereco.id.desc()).first()
-        print(endereco)
         if endereco:
             form.endereco.data = endereco.endereco.title()
         else:
@@ -346,7 +346,6 @@ def relatorio():
         # Capturar o mês e o ano do formulário
         mes = int(request.form.get("mes"))
         ano = int(request.form.get("ano"))
-        
         # Redirecionar para a rota de resultados com os parâmetros
         return redirect(url_for("relatorio_resultados", mes=mes, ano=ano))
     
@@ -369,10 +368,11 @@ def relatorio_resultados(mes, ano):
     quantidade = len(placas)
     valor_total = quantidade * 100
     valor_total_str = f'{valor_total:,.2f}'
-
     # Criar a preferência de pagamento no Mercado Pago
-    API_MERCADO_PAGO = os.environ.get('API_MERCADO_PAGO')
-    sdk = mercadopago.SDK(API_MERCADO_PAGO)
+    PROD_ACCESS_TOKEN = os.environ.get('PROD_ACCESS_TOKEN')
+    sdk = mercadopago.SDK(PROD_ACCESS_TOKEN)
+    
+    link_resposta_pagamento = "https://web-production-7e591.up.railway.app/resultado_pagamento"
     preference_data = {
         "items": [
             {   "id": current_user.id,
@@ -383,9 +383,9 @@ def relatorio_resultados(mes, ano):
             }
         ],
         "back_urls": {
-            "success": url_for("resultado_pagamento", _external=True),
-            "failure": url_for("resultado_pagamento", _external=True),
-            "pending": url_for("resultado_pagamento", _external=True),
+            "success": link_resposta_pagamento,
+            "failure": link_resposta_pagamento,
+            "pending": link_resposta_pagamento,
         },
 
         "auto_return": "all",
@@ -393,7 +393,6 @@ def relatorio_resultados(mes, ano):
     }
 
     preference_response = sdk.preference().create(preference_data)
-    
     try:
         init_point = preference_response["response"]["init_point"]
     except:
@@ -437,8 +436,6 @@ def resultado_pagamento():
 def novo_webhook():
     # Receber notificação do Mercado Pago
     data = request.json
-    print(data)
-
     if data and "type" in data and data["type"] == "payment":
         payment_id = data.get("data", {}).get("id")
 
