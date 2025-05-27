@@ -4,6 +4,9 @@ from flask import url_for
 import pytz
 import requests
 import os
+from dotenv import load_dotenv
+
+load_dotenv()
 
 def format_data(dt):
     """Converte a data para o horário local e formata para exibição."""
@@ -69,15 +72,15 @@ def pegar_status(payment_id):
     url = f"https://api.mercadopago.com/v1/payments/{payment_id}"
 
     # Defina o cabeçalho de autorização com seu access token
-    CHAVE_API_DE_PAGAMENTO = os.environ.get('CHAVE_API_DE_PAGAMENTO')
+    PROD_ACCESS_TOKEN = os.environ.get('PROD_ACCESS_TOKEN')
 
     headers = {
-        "Authorization": f"Bearer {CHAVE_API_DE_PAGAMENTO}"  # Substitua pelo seu access token
+        "Authorization": f"Bearer {PROD_ACCESS_TOKEN}"  # Substitua pelo seu access token
     }
 
     # Faça a requisição GET
     response = requests.get(url, headers=headers)
-
+    print(response.json())
     valor_pago = None
 
     # Verifique se a requisição foi bem-sucedida
@@ -89,7 +92,7 @@ def pegar_status(payment_id):
     else:
         payment_info = response.json() 
         status_pagamento = payment_info.get('status')
-        id_pagamento = payment_id        
+        id_pagamento = payment_id
     return valor_pago, id_pagamento, status_pagamento
 
 

@@ -389,7 +389,7 @@ def relatorio_resultados(mes, ano):
         },
 
         "auto_return": "all",
-        "notification_url": "https://web-production-7e591.up.railway.app/novo_webhook",  # Adicione esta linha
+        "notification_url": "https://web-production-7e591.up.railway.app/",  # Adicione esta linha
     }
 
     preference_response = sdk.preference().create(preference_data)
@@ -404,69 +404,25 @@ def relatorio_resultados(mes, ano):
 @login_required
 def resultado_pagamento():
     status_pagamento = request.args.get('status')
-    id_usuario = current_user.id  # Obter ID do usuário logado
-    id_pagamento = request.args.get('payment_id')  # Supondo que você tenha passado o mês na URL
+    id_usuario = current_user.id  
+    id_pagamento = request.args.get('payment_id')
 
-    # url de desisitencia de pagamento id é NULL 
     if  id_pagamento == 'null':
         flash('Voce desistiu do pagamento caso queira falar com suporte chame no zap', 'warning')
         return redirect(url_for('relatorio'))        
 
     valor_pago, id_pagamento, status_pagamento = pegar_status(id_pagamento)
-    # Criação do registro de pagamento no banco de dados
-    pagamento = Pagamento.query.filter_by(id_pagamento=id_pagamento).first()
-    if pagamento and pagamento.status_pagamento == 'approved':
-        flash('Pagamento ja processando e aprovado', 'warning')
-        return redirect(url_for('relatorio'))
-    
     novo_pagamento = Pagamento(
-        id_pagamento=id_pagamento,  # Substitua pelo ID real retornado da API
+        id_pagamento=id_pagamento,
         status_pagamento=status_pagamento,
-        id_usuario=id_usuario        
+        id_usuario=id_usuario
     )
     db.session.add(novo_pagamento)
     db.session.commit() 
 
     if novo_pagamento.status_pagamento == 'approved':
         flash(f'Pagamento de R$ {valor_pago:,.2f} realizado com sucesso', 'success')
-
-    return render_template('resultado_pagamento.html', status=status_pagamento)
-
-@app.route("/novo_webhook", methods=["POST"])
-def novo_webhook():
-    # Receber notificação do Mercado Pago
-    data = request.json
-    if data and "type" in data and data["type"] == "payment":
-        payment_id = data.get("data", {}).get("id")
-
-        if payment_id:
-            PROD_ACCESS_TOKEN = os.environ.get("PROD_ACCESS_TOKEN")
-            sdk = mercadopago.SDK(PROD_ACCESS_TOKEN)
-            payment_info = sdk.payment().get(payment_id)
-
-            if payment_info["status"] == 200:
-                payment_status = payment_info["response"]["status"]
-                payment_id = payment_info["response"]["id"]
-                user_id = payment_info["response"]["payer"]["id"]  # Exemplo: obtenha o ID do pagador
-
-                # Atualize o banco de dados com o status do pagamento
-                pagamento = Pagamento.query.filter_by(id_pagamento=payment_id).first()
-                if pagamento:
-                    pagamento.status_pagamento = payment_status
-                else:
-                    # Se não existir, crie um novo registro
-                    novo_pagamento = Pagamento(
-                        id_pagamento=payment_id,
-                        status_pagamento=payment_status,
-                        id_usuario=user_id
-                    )
-                    db.session.add(novo_pagamento)
-
-                db.session.commit()
-
-    return jsonify({"status": "success"}), 200
-
-
+    return render_template('resultado_pagamento.html', status_pagamento=status_pagamento)
 
 
 @app.route('/solicitar_placas', methods=['GET', 'POST'])
@@ -480,26 +436,26 @@ def solicitar_placas():
             endereco = Endereco.endereco.default.arg
     
     if request.method == 'POST':
-        placas = request.form.getlist('placa')  # Lista de placas
-        enderecos = request.form.getlist('endereco_placa')  # Lista de endereços
-        crlvs = request.form.getlist('crlv')  # Lista de CRLVs
-        renavams = request.form.getlist('renavam')  # Lista de Renavams
+        placas = request.form.getlist('placa') 
+        enderecos = request.form.getlist('endereco_placa') 
+        crlvs = request.form.getlist('crlv')
+        renavams = request.form.getlist('renavam')
 
         lista_placas = []
         for placa, endereco, crlv, renavam in zip(placas, enderecos, crlvs, renavams):
-            # Placa(placa=form.placa.data.upper(),
-            # crlv=form.crlv.data, renavan=form.renavam.data, 
-            # endereco_placa=form.endereco_placa.data, id_user=current_user.id)
-            nova_placa = Placa(placa=placa.upper(), endereco_placa=endereco, crlv=crlv, renavan=renavam, id_user=current_user.id)
+            nova_placa = Placa(
+                placa=placa.upper(),
+                endereco_placa=endereco, 
+                crlv=crlv, renavan=renavam,
+                id_user=current_user.id
+                )
             db.session.add(nova_placa)
-            lista_placas.append(nova_placa) 
-        
+            lista_placas.append(nova_placa)        
         db.session.commit()
-        # Enviar e-mail
-        user = current_user  # Obtenha o usuário atual
+        
+        user = current_user
         if len(lista_placas) > 0:
-            enviar_email(user, lista_placas)           
-
+            enviar_email(user, lista_placas)      
             flash('Placas solicitadas com sucesso e e-mail enviado!', 'success')
             return redirect(url_for('minhas_placas'))
         else:
