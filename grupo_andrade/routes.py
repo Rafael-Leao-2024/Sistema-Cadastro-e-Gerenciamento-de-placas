@@ -440,8 +440,8 @@ def novo_webhook():
         payment_id = data.get("data", {}).get("id")
 
         if payment_id:
-            API_MERCADO_PAGO = os.environ.get("API_MERCADO_PAGO")
-            sdk = mercadopago.SDK(API_MERCADO_PAGO)
+            PROD_ACCESS_TOKEN = os.environ.get("PROD_ACCESS_TOKEN")
+            sdk = mercadopago.SDK(PROD_ACCESS_TOKEN)
             payment_info = sdk.payment().get(payment_id)
 
             if payment_info["status"] == 200:
