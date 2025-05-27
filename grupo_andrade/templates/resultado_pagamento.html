@@ -7,10 +7,10 @@
     Resultado do Pagamento
   </h1>
 
-  {% if status == 'approved' %}
+  {% if status_pagamento == 'approved' %}
   <p class="text-center text-2xl text-green-600 mb-4">Pagamento Aprovado!</p>
   <p>Obrigado pelo seu pagamento.</p>
-  {% elif status == 'pending' %}
+  {% elif status_pagamento == 'pending' %}
   <h2 class="text-center text-2xl text-orange-600 mb-4">Pagamento Pendente!</h2>
   <p class="text-center mb-4">Por favor, tente novamente.</p>
   {% else %}
