@@ -1,20 +1,22 @@
 from flask import render_template, redirect, url_for, flash, request, abort, jsonify
-from grupo_andrade.form import RegistrationForm, EmplacamentoForm, LoginForm, EnderecoForm, ResetPasswordForm, UpdateAccountForm, ConsultarForm, RequestResetForm
-from grupo_andrade.models import User, Placa, Endereco, Pagamento
 from flask_login import login_required, current_user, login_user, logout_user
-from . import app, db, bcrypt
-from sqlalchemy import desc
-from sqlalchemy import extract
+from flask_mail import Message
+from grupo_andrade.main import app, db, bcrypt
 from sqlalchemy.orm import joinedload
+from dotenv import load_dotenv
+from sqlalchemy import extract
+from sqlalchemy import desc
 from datetime import datetime, timedelta
+from PIL import Image
+import mercadopago
 import secrets
 import os
-from PIL import Image
+from grupo_andrade.form import (RegistrationForm, EmplacamentoForm, LoginForm, EnderecoForm,\
+                                ResetPasswordForm, UpdateAccountForm, ConsultarForm, RequestResetForm,\
+                                PlacaStatusForm)
+from grupo_andrade.models import User, Placa, Endereco, Pagamento
 from grupo_andrade.utilidades import enviar_email, pegar_status, verificar_email
-from flask_mail import Message
-from grupo_andrade import mail
-import mercadopago
-from dotenv import load_dotenv
+from grupo_andrade.main import mail
 
 load_dotenv()
  
@@ -23,27 +25,25 @@ load_dotenv()
 def homepage():
     return render_template('homepage.html', titulo='homepage')
 
-# @app.route("/emplacar", methods=["GET", "POST"])
-# @login_required
-# def emplacamento():
-#     form = EmplacamentoForm()
-#     if request.method == 'GET':
-#         endereco = Endereco.query.filter_by(id_user=current_user.id).order_by(Endereco.id.desc()).first()
-#         try:
-#             form.endereco_placa.data = endereco.endereco.title()
-#         except:
-#             form.endereco_placa.data = Endereco.endereco.default.arg
-#     if form.validate_on_submit():
-#         # Lógica para processar os dados do formulário
-#         placa = Placa(placa=form.placa.data.upper(), crlv=form.crlv.data, renavan=form.renavam.data, endereco_placa=form.endereco_placa.data, id_user=current_user.id)
-#         db.session.add(placa)
-#         db.session.commit()
-#         #placa = Placa.query.filter_by(placa=form.placa.data).first()
-#         enviar_email(current_user, placa=placa)
-#         flash(f'Placa {placa.placa.upper()} solicitada com Success!', 'success')
-#         # Exemplo: salvar no banco de dados ou fazer algo com os dados
-#         return redirect(url_for('minhas_placas'))
-#     return render_template('emplacar.html', form=form, titulo='emplacar')
+@app.route('/login', methods=['GET', 'POST'])
+def login():
+    form = LoginForm()
+    if current_user.is_authenticated:
+        flash(f'{current_user.username} voce ja esta logado e no Home page', 'success')
+        return redirect(url_for('homepage'))
+    if form.validate_on_submit():
+        user = User.query.filter_by(email=form.email.data).first()
+        if user != None:    
+            senha_usuario = bcrypt.check_password_hash(user.password, form.password.data)     
+        if user != None and senha_usuario == True:
+            login_user(user)
+            next_page = request.args.get('next')        
+            flash(f'User {user.username.title()} connected online', 'success')
+            return redirect(next_page or url_for('solicitar_placas'))
+        else:
+            flash('email e senha invalido', 'danger')
+            return redirect(url_for('login')) 
+    return render_template('login.html', form=form, titulo='login')
 
 @app.route("/logout")
 def logout():
@@ -59,8 +59,6 @@ def minhas_placas():
         per_page = 10
         page = request.args.get('page', 1, type=int)
         if current_user.is_authenticated:
-            #placas = Placa.query.filter_by(id_user=current_user.id).order_by(desc(Placa.date_create)).paginate(page=page, per_page=per_page, error_out=False)
-            # Carrega as placas do usuário logado, incluindo o relacionamento 'author'
             placas = Placa.query.options(joinedload(Placa.author))\
                        .filter_by(id_user=current_user.id)\
                        .order_by(desc(Placa.date_create))\
@@ -68,43 +66,16 @@ def minhas_placas():
     return render_template('minhas_placas.html', placas=placas, titulo='minhas placas')
 
 
-
 @app.route("/todas")
 def todas():
     with app.app_context():
         per_page = 10
         page = request.args.get('page', 1, type=int)
-        # Busca todas as placas, sem filtro de usuário
         placas = Placa.query.options(joinedload(Placa.author))\
                         .order_by(desc(Placa.date_create))\
                         .paginate(page=page, per_page=per_page, error_out=False)
-        # Conta o total de placas na base de dados
         total_placas = Placa.query.count()
     return render_template('todas.html', placas=placas, total_placas=total_placas, titulo='todas')
-
-
-@app.route('/login', methods=['GET', 'POST'])
-def login():
-    form = LoginForm()
-    if current_user.is_authenticated:
-        flash(f'{current_user.username} voce ja esta logado e no Home page', 'success')
-        return redirect(url_for('homepage'))
-    if form.validate_on_submit():
-        user = User.query.filter_by(email=form.email.data).first()
-        if user != None:    
-            senha_usuario = bcrypt.check_password_hash(user.password, form.password.data) # returns True        
-        if user != None and senha_usuario == True:
-            login_user(user)
-            #Captura a próxima página da query string ou redireciona para um padrão
-            next_page = request.args.get('next')  # Pega o valor de 'next' na URL            
-            flash(f'User {user.username.title()} connected online', 'success')
-
-            # Redireciona para a página desejada ou para 'emplacamento'
-            return redirect(next_page or url_for('solicitar_placas'))
-        else:
-            flash('email e senha invalido', 'danger')
-            return redirect(url_for('login')) 
-    return render_template('login.html', form=form, titulo='login')
 
 
 @app.route("/register", methods=['GET', 'POST'])
@@ -135,42 +106,29 @@ def register():
 @app.route('/minhas-placas/<int:placa_id>', methods=['GET', 'POST'])
 @login_required
 def placa_detail(placa_id):
-    # Busca a placa pelo ID
     form = EmplacamentoForm()
     placa = Placa.query.get_or_404(placa_id)
-
-    # Verifica se o usuário logado é o dono da placa
     if placa.id_user != current_user.id and current_user.email != "rafaelampaz6@gmail.com":
-        #abort(403)  # Ou redireciona para uma página de erro
         return render_template('erros/erro.html')
-
     if request.method == 'POST':
-        # Verifica se a caixa de seleção foi marcada
         received = request.form.get('received') == 'on'
 
         if received and not placa.received:
-            # Marca como recebido e define a data/hora atual
             placa.received = True
             placa.received_at = datetime.now()
             flash(f"Placa {placa.placa.upper()} Recebida com sucesso.", 'success')
         elif not received and placa.received:
-            # Verifica se o tempo limite de 10 minutos já passou
             time_limit = placa.received_at + timedelta(minutes=10)
             if datetime.now() <= time_limit:
                 placa.received = False
-                placa.received_at = None  # Opcional: limpa o campo
+                placa.received_at = None  
             else:
                 flash("Não é possível desmarcar após 10 minutos.", 'info')
-        
-        # Salva as alterações no banco de dados
         db.session.commit()
         
-        return redirect(url_for('placa_detail', placa_id=placa.id))  # Redireciona para a mesma página para refletir a alteração
-    
+        return redirect(url_for('placa_detail', placa_id=placa.id))     
     return render_template('placa_detail.html', placa=placa, form=form, titulo='detalhes')
 
-
-# rota de deletar postagem
 @app.route("/minhas-placas/<int:placa_id>/delete", methods=['GET', 'POST'])
 @login_required
 def delete(placa_id):
@@ -180,12 +138,10 @@ def delete(placa_id):
         flash("Você não tem permissão para deletar esta placa.", "warning")
         return redirect(url_for('minhas_placas'))
 
-    # Verifica se o tempo de 24 horas já passou
     time_limit = placa.date_create + timedelta(hours=24)
     if datetime.now() > time_limit:
         flash("Você só pode deletar placas criadas há menos de 24 horas.", "error")
         return redirect(url_for('minhas_placas'))
-
 
     db.session.delete(placa)
     db.session.commit()
@@ -203,7 +159,7 @@ def endereco():
         db.session.add(novo_endereco)
         db.session.commit()
         flash('Endereço Atualizado com Sucesso!', 'success')
-        return redirect(url_for('endereco'))  # Redireciona para a página inicial ou onde preferir
+        return redirect(url_for('endereco'))
     elif request.method == 'GET':
         endereco = Endereco.query.filter_by(id_user=current_user.id).order_by(Endereco.id.desc()).first()
         if endereco:
@@ -215,10 +171,8 @@ def endereco():
 
 @app.route('/usuarios')
 def listar_usuarios():
-    # usuarios = User.query.all()  # Consulta todos os usuários
     usuarios = User.query.order_by(User.id.desc()).all()
     return render_template('listar_usuarios.html', usuarios=usuarios)
-
 
 def save_picture(form_picture):
     random_hex = secrets.token_hex(8)
@@ -227,9 +181,9 @@ def save_picture(form_picture):
     picture_path = os.path.join(app.root_path, 'static/profile_pics', picture_fn)
 
     output_size = (125, 125)
-    i = Image.open(form_picture)
-    i.thumbnail(output_size)
-    i.save(picture_path)
+    imagem = Image.open(form_picture)
+    imagem.thumbnail(output_size)
+    imagem.save(picture_path)
 
     return picture_fn
 
@@ -254,7 +208,6 @@ def account():
     return render_template('account.html', title='Account', form=form, image_file=image_file)
 
 
-
 @app.route('/consulta', methods=['GET', 'POST'])
 @login_required
 def consulta():
@@ -264,8 +217,6 @@ def consulta():
         placa = request.form.get('placa')
         placa = placa.upper()
         if placa:
-            #resultado = Placa.query.filter_by(placa=placa).first()
-            #resultado = Placa.query.filter(Placa.placa.ilike(f"%{placa}%")).all()
             resultados = Placa.query.filter(Placa.placa.ilike(f"%{placa}%")).order_by(Placa.date_create.desc()).all()
             if not resultados:
                 flash("Placa não encontrada!", "warning")
@@ -462,3 +413,28 @@ def solicitar_placas():
             flash('Voce não preencheu os campos com os dados!', 'info')
             return redirect(url_for('solicitar_placas'))        
     return render_template('solicitar_placas.html', titulo='solicitar varias placas', endereco=endereco)
+
+@app.route("/gerenciamento-pedidos")
+def gerenciamento_pedidos():
+    form = PlacaStatusForm()
+    page = request.args.get('page', 1, type=int)
+    tamanho = len(Placa.query.all())
+    placas = Placa.query.options(joinedload(Placa.author))\
+                       .order_by(desc(Placa.date_create))\
+                       .paginate(page=page, per_page=10, error_out=False)
+    return render_template('status_manager_placas.html', placas=placas, titulo='gerenciamento', tamanho=tamanho, form=form)
+
+
+@app.route("/gerenciamento-pedidos/<int:id_placa>", methods=['GET', 'POST'])
+def gerenciamento_final(id_placa):
+    form = PlacaStatusForm()
+    placa = Placa.query.filter(Placa.id==id_placa).first()
+    
+    if request.method == "POST":
+        if form.placa_confeccionada.data:
+            placa.placa_confeccionada = form.placa_confeccionada.data
+        if form.placa_a_caminho.data:
+            placa.placa_a_caminho = form.placa_a_caminho.data
+        db.session.commit()
+    
+    return redirect(url_for('gerenciamento_pedidos'))

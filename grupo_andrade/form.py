@@ -2,9 +2,8 @@ from flask_wtf import FlaskForm
 from flask_wtf.file import FileField, FileAllowed
 from wtforms import StringField, PasswordField, SubmitField, BooleanField, TextAreaField
 from wtforms.validators import DataRequired, Length, Email, EqualTo, ValidationError
-from grupo_andrade.models import User
 from flask_login import current_user
-
+from grupo_andrade.models import User
 
 
 class RegistrationForm(FlaskForm):
@@ -15,7 +14,6 @@ class RegistrationForm(FlaskForm):
     submit = SubmitField('Submit')
 
 
-# Defina o formulário de emplacamento
 class EmplacamentoForm(FlaskForm):
     placa = StringField('Placa', validators=[DataRequired()])
     crlv = StringField('CRLV', validators=[DataRequired()])
@@ -55,11 +53,6 @@ class UpdateAccountForm(FlaskForm):
             if user:
                 raise ValidationError('That email is taken. Please choose a different one.')
 
-    # def validate_username(self, username):
-    #     if username.data != current_user.username:
-    #         user = User.query.filter_by(username=username.data).first()
-    #         if user:
-    #             raise ValidationError('That username is taken. Please choose a different one.')
 
 class ConsultarForm(FlaskForm):
     placa = StringField('Placa', validators=[DataRequired()])
@@ -76,8 +69,14 @@ class RequestResetForm(FlaskForm):
         if user is None:
             raise ValidationError('There is no account with that email. You must register first.')
 
+
 class ResetPasswordForm(FlaskForm):
     password = PasswordField('Password', validators=[DataRequired()])
     confirm_password = PasswordField('Confirm Password',
                                      validators=[DataRequired(), EqualTo('password')])
     submit = SubmitField('Reset Password')
+
+class PlacaStatusForm(FlaskForm):
+    placa = StringField('Placa', validators=[DataRequired()])
+    placa_confeccionada = BooleanField("Recebida", default=False)
+    placa_a_caminho = BooleanField("Recebida", default=False)

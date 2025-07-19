@@ -1,10 +1,10 @@
-from grupo_andrade import mail
 from flask_mail import Message
 from flask import url_for
-import pytz
-import requests
-import os
 from dotenv import load_dotenv
+from grupo_andrade.main import mail
+import requests
+import pytz
+import os
 
 load_dotenv()
 
@@ -34,28 +34,22 @@ def format_data_completa(dt):
 
 def enviar_email(user, placas):
     mensagem = Message(
-        'Solicitação de Placas', 
+        subject='Solicitação de Placas', 
         sender=(user.username, user.email), 
         recipients=['rafaelampaz6@gmail.com']
     )
-
-    # Construir o corpo do e-mail com os detalhes de todas as placas
     detalhes_placas = ""
     for placa in placas:
         detalhes_placas += f'''
-Placa: {placa.placa.upper()}
-RENAVAM: {placa.renavan}
-CRLV: {placa.crlv}
+Placa:  {placa.placa.upper()}
+RENAVAM:{placa.renavan}
+CRLV:   {placa.crlv}
 Endereço de entrega: {placa.endereco_placa.title()}
-
 Link para detalhes: {url_for('placa_detail', placa_id=placa.id, _external=True)}
-
 '''
     mensagem.body = f'''
 Olá Grupo Andrade,
-
 Segue abaixo os detalhes das solicitações de placas:
-
 {detalhes_placas}
 
 Atenciosamente,
@@ -65,25 +59,16 @@ Equipe de Atendimento
     mail.send(mensagem)
 
 
-
-
-def pegar_status(payment_id):
-    
+def pegar_status(payment_id):    
     url = f"https://api.mercadopago.com/v1/payments/{payment_id}"
-
-    # Defina o cabeçalho de autorização com seu access token
     PROD_ACCESS_TOKEN = os.environ.get('PROD_ACCESS_TOKEN')
-
     headers = {
-        "Authorization": f"Bearer {PROD_ACCESS_TOKEN}"  # Substitua pelo seu access token
+        "Authorization": f"Bearer {PROD_ACCESS_TOKEN}" 
     }
-
-    # Faça a requisição GET
     response = requests.get(url, headers=headers)
     print(response.json())
     valor_pago = None
 
-    # Verifique se a requisição foi bem-sucedida
     if response.status_code == 200 and response.json().get('status') == 'approved':
         payment_info = response.json()  # Converte a resposta para JSON
         status_pagamento = payment_info['status']
@@ -96,15 +81,9 @@ def pegar_status(payment_id):
     return valor_pago, id_pagamento, status_pagamento
 
 
-# em desemvolvimento para pull validaçao de email
-
 def verificar_email(email):
     CHAVE_API_DE_EMAIL = os.environ.get('CHAVE_API_DE_EMAIL')
     url = f"https://api.hunter.io/v2/email-verifier?email={email}&api_key={CHAVE_API_DE_EMAIL}"    
     response = requests.get(url)
     dados = response.json()
     return dados.get('data', {}).get('status') == 'valid' or dados.get('data', {}).get('status') == 'accept_all'
-
-
-
-# print(verificar_email('rafaelampaz@hotmail.com'))

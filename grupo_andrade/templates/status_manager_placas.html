@@ -1,0 +1,123 @@
+{% extends "base.html" %} {% block title %}{{ titulo }}{% endblock %} {% block
+content %}
+<div class="container mx-auto p-6">
+  <h1 class="text-3xl font-bold text-center mb-8 text-gray-800">
+    Gerenciamento de Controle de placas
+  </h1>
+
+  <div class="bg-white shadow-md rounded-lg p-6">
+    <div class="text-center mb-6">
+      <h2 class="text-xl font-semibold text-gray-700">
+        Total de placas: {{ tamanho }}
+      </h2>
+    </div>
+
+    {% for placa in placas %}
+    <a href="{{ url_for('todas') }}">
+      <div
+        class="ml-5 p-6 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 flex items-center bg-gray-100 p-4 mb-4 rounded-lg shadow-sm"
+      >
+        <!-- Informações da Placa -->
+
+        <div class="flex flex-col space-y-1">
+          <div class="flex flex-col space-y-1">
+            <p class="text-lg font-semibold text-gray-800">
+              Placa:{{ placa.id }}, {{ placa.placa }}
+            </p>
+          </div>
+          <span
+            class="ml-2 text-lg {{ 'text-green-600' if placa.placa_confeccionada else 'text-orange-600' }}"
+            ><p class="text-lg font-semibold text-gray-800">
+              Status de Confecçao
+            </p>
+            {{ "Placa confeccionada" if placa.placa_confeccionada else "placa em
+            processamento de confecçao" }}
+          </span>
+        </div>
+
+        <form
+          method="POST"
+          action="{{ url_for('gerenciamento_final', id_placa=placa.id) }}"
+        >
+          {{ form.hidden_tag() }}
+          <label class="inline-flex items-center mt-3">
+            <input
+              type="checkbox"
+              name="placa_confeccionada"
+              value="{{ placa.placa_confeccionada }}"
+              class="form-checkbox h-6 w-6"
+              {%
+              if
+              placa.placa_confeccionada
+              %}checked{%
+              endif
+              %}
+            />
+            <span
+              class="ml-2 text-lg {{ 'text-green-600' if placa.placa_confeccionada else 'text-orange-600' }}"
+            >
+              {{ "Placa Confeccionada" if placa.placa_confeccionada else "Click
+              para informa placa Confeccionada" }}
+            </span>
+          </label>
+
+          <div class="mt-4">
+            <button
+              type="submit"
+              class="bg-blue-500 text-white px-4 py-2 rounded-md"
+            >
+              Atualizar Status
+            </button>
+          </div>
+        </form>
+
+        <div class="flex flex-col space-y-1">
+          <span
+            class="ml-2 text-lg {{ 'text-green-600' if placa.placa_a_caminho else 'text-orange-600' }}"
+            ><p class="text-lg font-semibold text-gray-800">A Caminho</p>
+            {{ "Placa a caminho" if placa.placa_a_caminho else "placa em
+            processamento" }}
+          </span>
+        </div>
+
+        <form
+          method="POST"
+          action="{{ url_for('gerenciamento_final', id_placa=placa.id) }}"
+        >
+          {{ form.hidden_tag() }}
+          <label class="inline-flex items-center mt-3">
+            <input
+              type="checkbox"
+              name="placa_a_caminho"
+              value="{{ placa.placa_a_caminho }}"
+              class="form-checkbox h-6 w-6"
+              {%
+              if
+              placa.placa_a_caminho
+              %}checked{%
+              endif
+              %}
+            />
+            <span
+              class="ml-2 text-lg {{ 'text-green-600' if placa.placa_a_caminho else 'text-orange-600' }}"
+            >
+              {{ "Placa a Caminho" if placa.placa_a_caminho else "Placa em
+              processo de confecçao" }}
+            </span>
+          </label>
+
+          <div class="mt-4">
+            <button
+              type="submit"
+              class="bg-blue-500 text-white px-4 py-2 rounded-md"
+            >
+              Atualizar Status
+            </button>
+          </div>
+        </form>
+      </div>
+    </a>
+    {% endfor %}
+  </div>
+</div>
+{% endblock %}

@@ -1,5 +1,5 @@
-from grupo_andrade import app, DEBUG
+from grupo_andrade.main import app
 
 
 if __name__ == '__main__':
-    app.run(debug=DEBUG)
+    app.run(debug=True)
