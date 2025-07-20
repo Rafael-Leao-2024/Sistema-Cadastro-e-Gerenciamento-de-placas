@@ -37,7 +37,8 @@ def login():
             senha_usuario = bcrypt.check_password_hash(user.password, form.password.data)     
         if user != None and senha_usuario == True:
             login_user(user)
-            next_page = request.args.get('next')        
+            next_page = request.args.get('next')
+            antes = request.full_path
             flash(f'User {user.username.title()} connected online', 'success')
             return redirect(next_page or url_for('solicitar_placas'))
         else:
@@ -433,6 +434,7 @@ def pegar_pagina(url):
     except:
         numero = 1
     return numero
+
 
 @app.route("/gerenciamento-pedidos/<int:id_placa>", methods=['GET', 'POST'])
 @login_required
