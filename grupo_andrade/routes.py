@@ -23,7 +23,7 @@ load_dotenv()
 
 @app.route("/")
 def homepage():
-    return render_template('homepage.html', titulo='homepage')
+    return render_template('main/homepage.html', titulo='homepage')
 
 @app.route('/login', methods=['GET', 'POST'])
 def login():
@@ -43,7 +43,7 @@ def login():
         else:
             flash('email e senha invalido', 'danger')
             return redirect(url_for('login')) 
-    return render_template('login.html', form=form, titulo='login')
+    return render_template('auth/login.html', form=form, titulo='login')
 
 @app.route("/logout")
 def logout():
@@ -63,7 +63,7 @@ def minhas_placas():
                        .filter_by(id_user=current_user.id)\
                        .order_by(desc(Placa.date_create))\
                        .paginate(page=page, per_page=per_page, error_out=False)
-    return render_template('minhas_placas.html', placas=placas, titulo='minhas placas')
+    return render_template('placa/minhas_placas.html', placas=placas, titulo='minhas placas')
 
 
 @app.route("/todas")
@@ -75,7 +75,7 @@ def todas():
                         .order_by(desc(Placa.date_create))\
                         .paginate(page=page, per_page=per_page, error_out=False)
         total_placas = Placa.query.count()
-    return render_template('todas.html', placas=placas, total_placas=total_placas, titulo='todas')
+    return render_template('placa/todas.html', placas=placas, total_placas=total_placas, titulo='todas')
 
 
 @app.route("/register", methods=['GET', 'POST'])
@@ -100,7 +100,7 @@ def register():
         else:
             flash(f'Username e Email ja exiti por favor escolha outros', 'info')
             return redirect(url_for('register')) 
-    return render_template('register.html', form=form, titulo='register')
+    return render_template('auth/register.html', form=form, titulo='register')
 
 
 @app.route('/minhas-placas/<int:placa_id>', methods=['GET', 'POST'])
@@ -108,7 +108,7 @@ def register():
 def placa_detail(placa_id):
     form = EmplacamentoForm()
     placa = Placa.query.get_or_404(placa_id)
-    if placa.id_user != current_user.id and current_user.email != "rafaelampaz6@gmail.com":
+    if not placa.id_user == current_user.id and not current_user.username == "admin":
         return render_template('erros/erro.html')
     if request.method == 'POST':
         received = request.form.get('received') == 'on'
@@ -126,8 +126,8 @@ def placa_detail(placa_id):
                 flash("Não é possível desmarcar após 10 minutos.", 'info')
         db.session.commit()
         
-        return redirect(url_for('placa_detail', placa_id=placa.id))     
-    return render_template('placa_detail.html', placa=placa, form=form, titulo='detalhes')
+        return redirect(url_for('placa_detail', placa_id=placa.id))   
+    return render_template('placa/placa_detail.html', placa=placa, form=form, titulo='detalhes')
 
 @app.route("/minhas-placas/<int:placa_id>/delete", methods=['GET', 'POST'])
 @login_required
@@ -166,13 +166,13 @@ def endereco():
             form.endereco.data = endereco.endereco.title()
         else:
             form.endereco.data = Endereco.endereco.default.arg
-    return render_template('endereco.html', form=form, endereco=endereco)
+    return render_template('user/endereco.html', form=form, endereco=endereco)
 
 
 @app.route('/usuarios')
 def listar_usuarios():
     usuarios = User.query.order_by(User.id.desc()).all()
-    return render_template('listar_usuarios.html', usuarios=usuarios)
+    return render_template('user/listar_usuarios.html', usuarios=usuarios)
 
 def save_picture(form_picture):
     random_hex = secrets.token_hex(8)
@@ -205,7 +205,7 @@ def account():
         form.username.data = current_user.username
         form.email.data = current_user.email
     image_file = url_for('static', filename='profile_pics/' + current_user.image_file)
-    return render_template('account.html', title='Account', form=form, image_file=image_file)
+    return render_template('user/account.html', title='Account', form=form, image_file=image_file)
 
 
 @app.route('/consulta', methods=['GET', 'POST'])
@@ -222,7 +222,7 @@ def consulta():
                 flash("Placa não encontrada!", "warning")
             else:
                 flash(f"Resultados Encontrados {len(resultados)}", "success")
-    return render_template('consulta.html', resultados=resultados, form=form)
+    return render_template('placa/consulta.html', resultados=resultados, form=form)
 
 
 @app.route('/editar/<int:placa_id>', methods=['GET', 'POST'])
@@ -244,7 +244,7 @@ def editar_placa(placa_id):
         flash(f"Os dados da placa {placa.placa.upper()} foram atualizados com sucesso!", "success")
         return redirect(url_for('placa_detail', placa_id=placa.id))
 
-    return render_template('editar_placa.html', placa=placa)
+    return render_template('placa/editar_placa.html', placa=placa)
 
 
 def enviar_email_senha(user):
@@ -268,7 +268,7 @@ def reset_request():
         enviar_email_senha(user)
         flash('Um e-mail foi enviado com instruções para redefinir sua senha.', 'info')
         return redirect(url_for('login'))
-    return render_template('reset_request.html', title='Reset Password', form=form)
+    return render_template('auth/reset_request.html', title='Reset Password', form=form)
 
 
 
@@ -287,7 +287,7 @@ def reset_token(token):
         db.session.commit()
         flash('Sua senha foi atualizada! Agora você pode fazer login', 'success')
         return redirect(url_for('login'))
-    return render_template('reset_token.html', title='Reset Password', form=form)
+    return render_template('auth/reset_token.html', title='Reset Password', form=form)
 
 
 @app.route("/relatorio", methods=["GET", "POST"])
@@ -301,7 +301,7 @@ def relatorio():
         return redirect(url_for("relatorio_resultados", mes=mes, ano=ano))
     
     # Renderizar o formulário na primeira exibição
-    return render_template("relatorio_form.html")
+    return render_template("pagamento/relatorio_form.html")
 
 
     
@@ -348,7 +348,7 @@ def relatorio_resultados(mes, ano):
         init_point = preference_response["response"]["init_point"]
     except:
         init_point = '/'
-    return render_template("relatorio_resultados.html", placas=placas, mes=mes, ano=ano, quantidade=quantidade,valor_total=valor_total_str,init_point=init_point)
+    return render_template("pagamento/relatorio_resultados.html", placas=placas, mes=mes, ano=ano, quantidade=quantidade,valor_total=valor_total_str,init_point=init_point)
 
 
 @app.route('/resultado_pagamento')
@@ -373,7 +373,7 @@ def resultado_pagamento():
 
     if novo_pagamento.status_pagamento == 'approved':
         flash(f'Pagamento de R$ {valor_pago:,.2f} realizado com sucesso', 'success')
-    return render_template('resultado_pagamento.html', status_pagamento=status_pagamento)
+    return render_template('pagamento/resultado_pagamento.html', status_pagamento=status_pagamento)
 
 
 @app.route('/solicitar_placas', methods=['GET', 'POST'])
@@ -412,7 +412,7 @@ def solicitar_placas():
         else:
             flash('Voce não preencheu os campos com os dados!', 'info')
             return redirect(url_for('solicitar_placas'))        
-    return render_template('solicitar_placas.html', titulo='solicitar varias placas', endereco=endereco)
+    return render_template('placa/solicitar_placas.html', titulo='solicitar varias placas', endereco=endereco)
 
 @app.route("/gerenciamento-pedidos")
 @login_required
@@ -423,12 +423,15 @@ def gerenciamento_pedidos():
                        .paginate(page=page, per_page=10, error_out=False)
 
     form = PlacaStatusForm()
-    return render_template('status_manager_placas.html', placas=placas, titulo='gerenciamento', tamanho=placas.total, form=form, page=page)
+    return render_template('placa/status_manager_placas.html', placas=placas, titulo='gerenciamento', tamanho=placas.total, form=form, page=page)
 
     
 def pegar_pagina(url):
-    indice = url.index("=")
-    numero = url[indice + 1:]
+    try:
+        indice = url.index("=")
+        numero = url[indice + 1:]
+    except:
+        numero = 1
     return numero
 
 @app.route("/gerenciamento-pedidos/<int:id_placa>", methods=['GET', 'POST'])
@@ -436,7 +439,7 @@ def pegar_pagina(url):
 def gerenciamento_final(id_placa):
     form = PlacaStatusForm()
     placa = Placa.query.filter(Placa.id==id_placa).first()
-    page = pegar_pagina(dict(request.headers).get('Referer'))
+    page = int(pegar_pagina(dict(request.headers).get('Referer')))
     
     if request.method == "POST" and current_user.username == "admin":
         if form.placa_confeccionada.data:
@@ -446,6 +449,6 @@ def gerenciamento_final(id_placa):
             placa.placa_a_caminho = form.placa_a_caminho.data
         db.session.commit()
     else:
-        flash(category="info", message="Voce nao tem permissao")   
+        flash(category="info", message="Voce nao tem permissao de ADMIN")   
     return redirect(url_for('gerenciamento_pedidos', page=page))
 

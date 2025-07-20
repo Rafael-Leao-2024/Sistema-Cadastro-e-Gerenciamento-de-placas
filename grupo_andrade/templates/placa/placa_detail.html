@@ -1,5 +1,5 @@
-{% extends "base.html" %} {% block title %}{{ titulo }}{% endblock %} {% block
-content %}
+{% extends "main/base.html" %} {% block title %}{{ titulo }}{% endblock %} {%
+block content %}
 <div class="container mx-auto p-6">
   <h1 class="text-3xl font-bold text-center mb-8 text-gray-800">
     Detalhes da Placa: {{ placa.placa.upper() }}
@@ -23,11 +23,45 @@ content %}
       </p>
     </div>
 
+    <span
+      class="mt-4 ml-2 text-lg {{ 'text-green-600' if placa.placa_confeccionada else 'text-orange-600' }}"
+      ><p class="text-lg font-semibold text-gray-800">Status de Confecçao</p>
+      {% if placa.placa_confeccionada %}
+      <i
+        class="fas fa-check-circle p-2"
+        style="font-size: 24px; color: #27ae60"
+      ></i>
+      {% else %}
+      <i
+        class="fas fa-cog fa-spin p-2"
+        style="font-size: 24px; color: orange"
+      ></i>
+
+      {% endif %} {{ "Placa confeccionada" if placa.placa_confeccionada else
+      "placa em processamento de confecçao" }}
+    </span>
+
+    <div class="flex flex-col space-y-1">
+      <span
+        class="ml-2 text-lg {{ 'text-green-600' if placa.placa_a_caminho else 'text-orange-600' }}"
+      >
+        {% if placa.placa_a_caminho %}
+        <i class="fas fa-biking" style="font-size: 24px; color: #3366ff"></i>
+        {% else %}
+        <i
+          class="fas fa-motorcycle"
+          style="font-size: 24px; color: #ff6600"
+        ></i>
+        {% endif %} {{ " Placa a caminho" if placa.placa_a_caminho else " placa
+        em processamento" }}
+      </span>
+    </div>
+
     <form
       method="POST"
       action="{{ url_for('placa_detail', placa_id=placa.id) }}"
     >
-      {{ form.hidden_tag() }}
+      {{ form.hidden_tag() }} {% if placa.placa_a_caminho %}
       <label class="inline-flex items-center mt-3">
         <input
           type="checkbox"
@@ -44,7 +78,7 @@ content %}
           class="ml-2 text-lg {{ 'text-green-600' if placa.received else 'pendente' }}"
         >
           {{ "Recebida" if placa.received else "Placa Pendente Click para
-          confirma recebimento" }}
+          confirma recebimento" }} {% endif %}
         </span>
       </label>
 
