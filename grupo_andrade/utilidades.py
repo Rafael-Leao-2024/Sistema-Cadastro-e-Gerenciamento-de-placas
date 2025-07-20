@@ -87,3 +87,5 @@ def verificar_email(email):
     response = requests.get(url)
     dados = response.json()
     return dados.get('data', {}).get('status') == 'valid' or dados.get('data', {}).get('status') == 'accept_all'
+
+

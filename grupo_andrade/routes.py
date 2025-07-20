@@ -415,26 +415,37 @@ def solicitar_placas():
     return render_template('solicitar_placas.html', titulo='solicitar varias placas', endereco=endereco)
 
 @app.route("/gerenciamento-pedidos")
+@login_required
 def gerenciamento_pedidos():
-    form = PlacaStatusForm()
     page = request.args.get('page', 1, type=int)
-    tamanho = len(Placa.query.all())
     placas = Placa.query.options(joinedload(Placa.author))\
                        .order_by(desc(Placa.date_create))\
                        .paginate(page=page, per_page=10, error_out=False)
-    return render_template('status_manager_placas.html', placas=placas, titulo='gerenciamento', tamanho=tamanho, form=form)
 
+    form = PlacaStatusForm()
+    return render_template('status_manager_placas.html', placas=placas, titulo='gerenciamento', tamanho=placas.total, form=form, page=page)
+
+    
+def pegar_pagina(url):
+    indice = url.index("=")
+    numero = url[indice + 1:]
+    return numero
 
 @app.route("/gerenciamento-pedidos/<int:id_placa>", methods=['GET', 'POST'])
+@login_required
 def gerenciamento_final(id_placa):
     form = PlacaStatusForm()
     placa = Placa.query.filter(Placa.id==id_placa).first()
+    page = pegar_pagina(dict(request.headers).get('Referer'))
     
-    if request.method == "POST":
+    if request.method == "POST" and current_user.username == "admin":
         if form.placa_confeccionada.data:
             placa.placa_confeccionada = form.placa_confeccionada.data
         if form.placa_a_caminho.data:
+            placa.placa_confeccionada = True
             placa.placa_a_caminho = form.placa_a_caminho.data
         db.session.commit()
-    
-    return redirect(url_for('gerenciamento_pedidos'))
+    else:
+        flash(category="info", message="Voce nao tem permissao")   
+    return redirect(url_for('gerenciamento_pedidos', page=page))
+

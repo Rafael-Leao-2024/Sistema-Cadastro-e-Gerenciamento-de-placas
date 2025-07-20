@@ -13,7 +13,7 @@ content %}
     </div>
 
     {% for placa in placas %}
-    <a href="{{ url_for('todas') }}">
+    <a href="{{ url_for('placa_detail', placa_id=placa.id) }}">
       <div
         class="ml-5 p-6 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 flex items-center bg-gray-100 p-4 mb-4 rounded-lg shadow-sm"
       >
@@ -21,17 +21,28 @@ content %}
 
         <div class="flex flex-col space-y-1">
           <div class="flex flex-col space-y-1">
-            <p class="text-lg font-semibold text-gray-800">
-              Placa:{{ placa.id }}, {{ placa.placa }}
+            <p class="text-lg font-semibold text-gray-800 ml-2">
+              Placa {{ placa.placa }} ID:{{ placa.id }}
             </p>
           </div>
           <span
-            class="ml-2 text-lg {{ 'text-green-600' if placa.placa_confeccionada else 'text-orange-600' }}"
+            class="mt-4 ml-2 text-lg {{ 'text-green-600' if placa.placa_confeccionada else 'text-orange-600' }}"
             ><p class="text-lg font-semibold text-gray-800">
               Status de Confecçao
             </p>
-            {{ "Placa confeccionada" if placa.placa_confeccionada else "placa em
-            processamento de confecçao" }}
+            {% if placa.placa_confeccionada %}
+            <i
+              class="fas fa-check-circle p-2"
+              style="font-size: 24px; color: #27ae60"
+            ></i>
+            {% else %}
+            <i
+              class="fas fa-cog fa-spin p-2"
+              style="font-size: 24px; color: orange"
+            ></i>
+
+            {% endif %} {{ "Placa confeccionada" if placa.placa_confeccionada
+            else "placa em processamento de confecçao" }}
           </span>
         </div>
 
@@ -74,9 +85,19 @@ content %}
         <div class="flex flex-col space-y-1">
           <span
             class="ml-2 text-lg {{ 'text-green-600' if placa.placa_a_caminho else 'text-orange-600' }}"
-            ><p class="text-lg font-semibold text-gray-800">A Caminho</p>
-            {{ "Placa a caminho" if placa.placa_a_caminho else "placa em
-            processamento" }}
+          >
+            {% if placa.placa_a_caminho %}
+            <i
+              class="fas fa-biking"
+              style="font-size: 24px; color: #3366ff"
+            ></i>
+            {% else %}
+            <i
+              class="fas fa-motorcycle"
+              style="font-size: 24px; color: #ff6600"
+            ></i>
+            {% endif %} {{ " Placa a caminho" if placa.placa_a_caminho else "
+            placa em processamento" }}
           </span>
         </div>
 
@@ -119,5 +140,30 @@ content %}
     </a>
     {% endfor %}
   </div>
+
+  {% for page_num in placas.iter_pages(left_edge=1, right_edge=1,
+  left_current=1, right_current=2) %} {% if page_num %} {% if placas.page ==
+  page_num %}
+  <!-- Página ativa (verde) -->
+  <a
+    class="px-4 py-2 bg-green-500 text-white font-semibold rounded-md hover:bg-green-600 transition-all"
+    href="{{ url_for('gerenciamento_pedidos', page=page_num) }}"
+  >
+    {{ page_num }}
+  </a>
+  {% else %}
+  <!-- Páginas inativas (verde claro) -->
+  <a
+    class="px-4 py-2 bg-green-200 text-green-700 font-semibold rounded-md hover:bg-green-300 transition-all"
+    href="{{ url_for('gerenciamento_pedidos', page=page_num) }}"
+  >
+    {{ page_num }}
+  </a>
+  {% endif %} {% else %}
+  <!-- Ellipsis (...) -->
+  <span class="px-4 py-2 bg-gray-200 text-gray-500 font-semibold rounded-md">
+    ...
+  </span>
+  {% endif %} {% endfor %}
 </div>
 {% endblock %}
